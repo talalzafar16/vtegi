@@ -27,7 +27,7 @@ export default async function CmsPage({ params }: Props) {
       <Section>
         <article className="mx-auto max-w-3xl">
           <RichText data={page.content} />
-          <p className="mt-16 border-t border-zinc-200 pt-6 text-sm text-zinc-500">
+          <p className="mt-16 border-t border-ink-200 pt-6 text-sm text-ink-500 on-dark:border-white/10">
             Last updated {formatDate(page.updatedAt)}
           </p>
         </article>

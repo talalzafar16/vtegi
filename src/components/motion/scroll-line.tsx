@@ -12,7 +12,7 @@ export function ScrollLine({ className }: { className?: string }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 50%'] })
 
   return (
-    <div ref={ref} aria-hidden className={cn('w-px bg-zinc-200', className)}>
+    <div ref={ref} aria-hidden className={cn('w-px bg-ink-200 on-dark:bg-white/10', className)}>
       <motion.div
         className="h-full w-full origin-top bg-brand-700"
         style={{ scaleY: reduceMotion ? 1 : scrollYProgress }}

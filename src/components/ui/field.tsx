@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 const controlStyles =
-  'w-full rounded-md border border-zinc-300 bg-white px-3.5 text-[15px] text-zinc-900 shadow-xs transition-colors placeholder:text-zinc-400 hover:border-zinc-400 focus-visible:border-brand-600 focus-visible:ring-3 focus-visible:ring-brand-600/15 focus-visible:outline-none disabled:opacity-60 aria-invalid:border-red-600 aria-invalid:ring-red-600/15'
+  'w-full rounded-md border border-ink-300 on-dark:border-white/15 bg-white on-dark:bg-ink-900 px-3.5 text-[15px] text-ink-900 on-dark:text-ink-100 shadow-xs transition-colors placeholder:text-ink-400 hover:border-ink-400 focus-visible:border-brand-600 focus-visible:ring-3 focus-visible:ring-brand-600/15 focus-visible:outline-none disabled:opacity-60 aria-invalid:border-red-600 aria-invalid:ring-red-600/15'
 
 export function Input({ className, ...props }: ComponentProps<'input'>) {
   return <input className={cn(controlStyles, 'h-11', className)} {...props} />
@@ -22,7 +22,7 @@ export function Select({ className, children, ...props }: ComponentProps<'select
       </select>
       <ChevronDown
         aria-hidden
-        className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-zinc-500"
+        className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-ink-500"
       />
     </div>
   )
@@ -42,10 +42,10 @@ type FieldProps = {
 export function Field({ id, label, required, hint, error, className, children }: FieldProps) {
   return (
     <div className={cn('space-y-1.5', className)}>
-      <label htmlFor={id} className="block text-sm font-medium text-zinc-800">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-800 on-dark:text-ink-200">
         {label}
         {required && (
-          <span aria-hidden className="text-brand-700">
+          <span aria-hidden className="text-brand-700 on-dark:text-brand-400">
             {' '}
             *
           </span>
@@ -53,12 +53,12 @@ export function Field({ id, label, required, hint, error, className, children }:
       </label>
       {children}
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-red-700">
+        <p id={`${id}-error`} className="text-sm text-red-700 on-dark:text-red-400">
           {error}
         </p>
       ) : (
         hint && (
-          <p id={`${id}-hint`} className="text-xs text-zinc-500">
+          <p id={`${id}-hint`} className="text-xs text-ink-500">
             {hint}
           </p>
         )

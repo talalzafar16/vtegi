@@ -40,7 +40,7 @@ export function PartnersSection({ heading, partners }: PartnersSectionProps) {
             alt={logo.name}
             width={logo.width ?? 240}
             height={logo.height ?? 120}
-            className="h-14 w-36 object-contain opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0"
+            className="h-14 w-36 object-contain opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0 dark:invert dark:hover:grayscale"
           />
         ))}
       </Marquee>

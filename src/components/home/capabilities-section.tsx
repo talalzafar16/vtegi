@@ -29,9 +29,9 @@ export function CapabilitiesSection({ heading, capabilities }: CapabilitiesSecti
             <Reveal delay={i * 0.05} className="h-full">
               <Link
                 href={`/capabilities/${capability.slug}`}
-                className="group flex h-full gap-5 rounded-xl border border-zinc-200 p-6 transition hover:border-zinc-900 hover:shadow-lg hover:shadow-zinc-950/5"
+                className="group flex h-full gap-5 rounded-xl border border-ink-200 p-6 transition hover:border-ink-900 hover:shadow-lg hover:shadow-ink-950/5 on-dark:border-white/10 on-dark:hover:border-white/40"
               >
-                <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-zinc-100 text-brand-700 transition-colors group-hover:bg-zinc-900 group-hover:text-white">
+                <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-ink-100 text-brand-700 transition-colors group-hover:bg-ink-900 group-hover:text-white on-dark:bg-white/5 on-dark:text-brand-400 on-dark:group-hover:bg-brand-700">
                   <Icon name={capability.icon} className="size-5" />
                 </span>
                 <span className="flex-1">
@@ -39,10 +39,12 @@ export function CapabilitiesSection({ heading, capabilities }: CapabilitiesSecti
                     {capability.title}
                     <ArrowUpRight
                       aria-hidden
-                      className="size-4 shrink-0 text-zinc-400 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-zinc-900"
+                      className="size-4 shrink-0 text-ink-400 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-ink-900 on-dark:group-hover:text-white"
                     />
                   </span>
-                  <span className="mt-2 block text-sm text-zinc-600">{capability.summary}</span>
+                  <span className="mt-2 block text-sm text-ink-600 on-dark:text-ink-400">
+                    {capability.summary}
+                  </span>
                 </span>
               </Link>
             </Reveal>

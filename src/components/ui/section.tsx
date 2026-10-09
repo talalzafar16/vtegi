@@ -4,10 +4,11 @@ import { cn } from '@/lib/utils'
 
 import { Container } from './container'
 
+// In dark mode, light/muted sections turn dark and dark sections go to black, keeping the rhythm.
 const tones = {
-  light: 'bg-white text-zinc-900',
-  muted: 'bg-zinc-50 text-zinc-900',
-  dark: 'bg-zinc-950 text-white',
+  light: 'bg-white text-ink-900 dark:bg-ink-950 dark:text-ink-100',
+  muted: 'bg-ink-50 text-ink-900 dark:bg-ink-900 dark:text-ink-100',
+  dark: 'bg-ink-950 text-white dark:bg-ink-1000',
 }
 
 type SectionProps = ComponentProps<'section'> & {
@@ -25,7 +26,16 @@ export function Section({
   ...props
 }: SectionProps) {
   return (
-    <section data-tone={tone} className={cn('py-20 md:py-28', tones[tone], className)} {...props}>
+    <section
+      data-tone={tone}
+      // Dark mode: hairline section edges give structure instead of relying on flat color blocks.
+      className={cn(
+        'py-20 md:py-28 dark:border-t dark:border-white/[0.06]',
+        tones[tone],
+        className,
+      )}
+      {...props}
+    >
       <Container className={containerClassName}>{children}</Container>
     </section>
   )

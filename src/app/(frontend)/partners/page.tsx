@@ -47,7 +47,7 @@ export default async function PartnersPage() {
               href={`#${group.value}`}
               className="rounded-full border border-white/20 px-4 py-2 text-sm hover:border-white"
             >
-              {group.title} <span className="text-zinc-500">{group.partners.length}</span>
+              {group.title} <span className="text-ink-500">{group.partners.length}</span>
             </a>
           ))}
         </nav>
@@ -65,7 +65,7 @@ export default async function PartnersPage() {
                     href={partner.website ?? undefined}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative flex h-32 flex-col items-center justify-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-900 hover:shadow-lg"
+                    className="group relative flex h-32 flex-col items-center justify-center gap-3 rounded-xl border border-ink-200 bg-white p-4 transition hover:border-ink-900 hover:shadow-lg dark:border-transparent dark:bg-ink-100 dark:hover:border-brand-500"
                   >
                     {logo?.url && (
                       <Image
@@ -76,10 +76,10 @@ export default async function PartnersPage() {
                         className="h-12 w-full object-contain"
                       />
                     )}
-                    <span className="text-xs font-medium text-zinc-600">{partner.name}</span>
+                    <span className="text-xs font-medium text-ink-600">{partner.name}</span>
                     <ArrowUpRight
                       aria-hidden
-                      className="absolute top-3 right-3 size-4 text-zinc-300 transition group-hover:text-zinc-900"
+                      className="absolute top-3 right-3 size-4 text-ink-300 transition group-hover:text-ink-900"
                     />
                   </a>
                 </li>

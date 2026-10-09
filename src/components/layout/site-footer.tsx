@@ -34,7 +34,7 @@ export async function SiteFooter() {
   })
 
   return (
-    <footer data-tone="dark" className="bg-zinc-950 text-zinc-400">
+    <footer data-tone="dark" className="bg-ink-950 text-ink-400 dark:bg-ink-1000">
       <Container>
         {/* Closing call to action, using VTEGI's own tagline. */}
         <div className="flex flex-col gap-8 border-b border-white/10 py-16 md:flex-row md:items-end md:justify-between md:py-20">
@@ -64,7 +64,7 @@ export async function SiteFooter() {
         <div className="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div className="space-y-6 text-sm">
             <Logo tone="light" />
-            {settings.tagline && <p className="text-zinc-300">{settings.tagline}</p>}
+            {settings.tagline && <p className="text-ink-300">{settings.tagline}</p>}
             {settings.offices?.map((office) => (
               <address key={office.id} className="not-italic">
                 <span className="block font-medium text-white">{office.label}</span>
@@ -143,7 +143,7 @@ export async function SiteFooter() {
 function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {
   return (
     <nav aria-label={title}>
-      <p className="font-mono text-xs tracking-[0.2em] text-zinc-500 uppercase">{title}</p>
+      <p className="font-mono text-xs tracking-[0.2em] text-ink-500 uppercase">{title}</p>
       <ul className="mt-5 space-y-3 text-sm">
         {links.map((link) => (
           <li key={link.href}>

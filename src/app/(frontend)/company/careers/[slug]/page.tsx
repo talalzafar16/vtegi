@@ -49,7 +49,7 @@ export default async function JobPage({ params }: Props) {
         title={job.title}
         intro={job.summary}
       >
-        <ul className="mb-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-300">
+        <ul className="mb-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-300">
           <li className="inline-flex items-center gap-2">
             <MapPin aria-hidden className="size-4" /> {job.location} ·{' '}
             {labelOf(workplaceOptions, job.workplace)}
@@ -75,7 +75,7 @@ export default async function JobPage({ params }: Props) {
               <Heading as="h2" size="md">
                 Interested?
               </Heading>
-              <p className="mt-3 text-zinc-600">
+              <p className="mt-3 text-ink-600 on-dark:text-ink-400">
                 {job.applyUrl
                   ? 'Apply through our application page.'
                   : 'Send a career inquiry with a link to your résumé or LinkedIn profile.'}

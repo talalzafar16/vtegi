@@ -40,7 +40,7 @@ export default async function EventPage({ params }: Props) {
         title={event.title}
         intro={event.summary}
       >
-        <ul className="mb-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-300">
+        <ul className="mb-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-300">
           <li className="inline-flex items-center gap-2">
             <CalendarDays aria-hidden className="size-4" />
             <time dateTime={event.startDate}>{formatDateTime(event.startDate)}</time>

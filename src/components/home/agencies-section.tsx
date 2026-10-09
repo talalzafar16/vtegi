@@ -24,7 +24,9 @@ export function AgenciesSection({ agencies }: { agencies: NonNullable<SiteSettin
                   className="h-16 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0"
                 />
               ) : (
-                <span className="text-sm font-medium text-zinc-600">{agency.name}</span>
+                <span className="text-sm font-medium text-ink-600 on-dark:text-ink-400">
+                  {agency.name}
+                </span>
               )}
             </li>
           )

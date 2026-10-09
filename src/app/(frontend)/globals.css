@@ -1,7 +1,13 @@
 @import 'tailwindcss';
 
-/* Styles for elements inside a dark section: `on-dark:text-white`. Sections set data-tone. */
-@custom-variant on-dark (&:where([data-tone='dark'], [data-tone='dark'] *));
+/*
+ * Two dark variants:
+ * - `on-dark:` — the element sits on a dark background: inside a dark section (data-tone="dark")
+ *   OR anywhere in dark mode. Use this for text, borders and surfaces (most cases).
+ * - `dark:` — only in dark mode (class on <html>, set by next-themes). Use for page/section backgrounds.
+ */
+@custom-variant on-dark (&:where([data-tone='dark'], [data-tone='dark'] *, .dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Fonts are loaded with next/font in layout.tsx */
 @theme inline {
@@ -24,6 +30,21 @@
   --color-brand-800: #a00a0a;
   --color-brand-900: #840f0f;
   --color-brand-950: #3d0101;
+
+  /* Ink: VTEGI's neutral scale. Same lightness steps as Tailwind's zinc (so contrast is
+     unchanged) but tinted toward the logo's oxblood instead of zinc's cold blue-gray. */
+  --color-ink-50: oklch(98.4% 0.003 25);
+  --color-ink-100: oklch(96.2% 0.005 25);
+  --color-ink-200: oklch(91.6% 0.007 25);
+  --color-ink-300: oklch(86.5% 0.009 25);
+  --color-ink-400: oklch(70.5% 0.012 25);
+  --color-ink-500: oklch(55.5% 0.014 25);
+  --color-ink-600: oklch(44.5% 0.014 25);
+  --color-ink-700: oklch(37% 0.013 25);
+  --color-ink-800: oklch(27.5% 0.012 25);
+  --color-ink-900: oklch(21% 0.011 25);
+  --color-ink-950: oklch(15.5% 0.01 25);
+  --color-ink-1000: oklch(11.5% 0.009 25);
 
   /* Max content width of the site (max-w-site), used by <Container>. */
   --container-site: 90rem;
@@ -89,7 +110,7 @@
 /* Typography for CMS rich text (components/ui/rich-text.tsx). */
 @layer components {
   .rich-text {
-    color: var(--color-zinc-700);
+    color: var(--color-ink-700);
     font-size: 1.0625rem;
     line-height: 1.75;
 
@@ -101,7 +122,7 @@
     }
     & h2 {
       margin-top: 2em;
-      color: var(--color-zinc-900);
+      color: var(--color-ink-900);
       font-size: 1.5rem;
       font-weight: 600;
       letter-spacing: -0.02em;
@@ -109,7 +130,7 @@
     }
     & h3 {
       margin-top: 1.75em;
-      color: var(--color-zinc-900);
+      color: var(--color-ink-900);
       font-size: 1.25rem;
       font-weight: 600;
     }
@@ -135,7 +156,7 @@
       text-underline-offset: 3px;
     }
     & strong {
-      color: var(--color-zinc-900);
+      color: var(--color-ink-900);
       font-weight: 600;
     }
     & blockquote {
@@ -144,9 +165,50 @@
       font-style: italic;
     }
   }
+
+  .dark .rich-text {
+    color: var(--color-ink-300);
+
+    & h2,
+    & h3,
+    & strong {
+      color: white;
+    }
+    & a,
+    & li::marker {
+      color: var(--color-brand-400);
+    }
+    & blockquote {
+      border-color: var(--color-brand-400);
+    }
+  }
+}
+
+/* Theme switch: the new theme is revealed as a circle growing from the toggle
+   (animated in theme-toggle.tsx), so the default cross-fade is turned off. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 @layer base {
+  /* Native controls (scrollbars, date pickers, autofill) follow the theme. */
+  .dark {
+    color-scheme: dark;
+  }
+
+  /* Dark mode: a faint film grain over the page so dark surfaces feel printed, not flat. */
+  .dark body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
   ::selection {
     background-color: var(--color-brand-700);
     color: white;

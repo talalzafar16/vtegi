@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 
 import { SiteFooter } from '@/components/layout/site-footer'
 import { SiteHeader } from '@/components/layout/site-header'
+import { ThemeProvider } from '@/components/layout/theme-provider'
 import { MotionProvider } from '@/components/motion/motion-provider'
 import { cn } from '@/lib/utils'
 
@@ -25,26 +26,30 @@ export const metadata: Metadata = {
 
 export default function FrontendLayout({ children }: { children: ReactNode }) {
   return (
+    // suppressHydrationWarning: next-themes adds the "dark" class before React loads.
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
         archivo.variable,
         mono.variable,
         'scroll-pt-18 scroll-smooth motion-reduce:scroll-auto',
       )}
     >
-      <body className="bg-white font-sans text-zinc-900 antialiased">
+      <body className="bg-white font-sans text-ink-900 antialiased dark:bg-ink-950 dark:text-ink-100">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:shadow-lg"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-ink-900 focus:shadow-lg"
         >
           Skip to main content
         </a>
-        <MotionProvider>
-          <SiteHeader />
-          <main id="main">{children}</main>
-          <SiteFooter />
-        </MotionProvider>
+        <ThemeProvider>
+          <MotionProvider>
+            <SiteHeader />
+            <main id="main">{children}</main>
+            <SiteFooter />
+          </MotionProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

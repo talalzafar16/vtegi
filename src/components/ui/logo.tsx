@@ -9,6 +9,9 @@ type LogoProps = {
   className?: string
 }
 
+const textWordmark =
+  'text-2xl leading-none font-extrabold tracking-tight text-white font-stretch-expanded'
+
 export function Logo({ tone = 'color', className }: LogoProps) {
   return (
     <Link
@@ -25,18 +28,20 @@ export function Logo({ tone = 'color', className }: LogoProps) {
         className="h-9 w-auto"
       />
       {tone === 'color' ? (
-        <Image
-          src="/brand/vtegi-wordmark.png"
-          alt=""
-          width={133}
-          height={24}
-          priority
-          className="h-6 w-auto"
-        />
+        <>
+          {/* The red gradient wordmark fades into dark backgrounds, so dark mode uses white text. */}
+          <Image
+            src="/brand/vtegi-wordmark.png"
+            alt=""
+            width={133}
+            height={24}
+            priority
+            className="h-6 w-auto dark:hidden"
+          />
+          <span className={cn(textWordmark, 'hidden dark:inline')}>VTEGI</span>
+        </>
       ) : (
-        <span className="text-2xl leading-none font-extrabold tracking-tight text-white font-stretch-expanded">
-          VTEGI
-        </span>
+        <span className={textWordmark}>VTEGI</span>
       )}
     </Link>
   )

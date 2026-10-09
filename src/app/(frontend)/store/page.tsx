@@ -81,10 +81,15 @@ export default function StorePage() {
           {categories.map(({ icon: CategoryIcon, title, text }) => (
             <li key={title}>
               <Card className="flex h-full gap-4">
-                <CategoryIcon aria-hidden className="size-6 shrink-0 text-brand-700" />
+                <CategoryIcon
+                  aria-hidden
+                  className="size-6 shrink-0 text-brand-700 on-dark:text-brand-400"
+                />
                 <span>
                   <span className="block font-semibold">{title}</span>
-                  <span className="mt-1 block text-sm text-zinc-600">{text}</span>
+                  <span className="mt-1 block text-sm text-ink-600 on-dark:text-ink-400">
+                    {text}
+                  </span>
                 </span>
               </Card>
             </li>

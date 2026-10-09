@@ -8,6 +8,7 @@ import { capabilityLinks, requestHref, solutionLinks, telHref } from '@/lib/navi
 
 import { DesktopNav } from './desktop-nav'
 import { MobileNav } from './mobile-nav'
+import { ThemeToggle } from './theme-toggle'
 
 export async function SiteHeader() {
   const [settings, solutions, capabilities] = await Promise.all([
@@ -24,7 +25,7 @@ export async function SiteHeader() {
   return (
     <>
       {/* Utility bar: contracting IDs and direct contact (desktop only, scrolls away). */}
-      <div className="hidden bg-zinc-950 text-zinc-400 lg:block">
+      <div className="hidden bg-ink-950 text-ink-400 lg:block dark:bg-ink-1000">
         <Container className="flex h-9 items-center justify-between font-mono text-[11px] tracking-wider uppercase">
           <p>
             {settings.cage && <>CAGE {settings.cage}</>}
@@ -47,11 +48,12 @@ export async function SiteHeader() {
         </Container>
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/85 backdrop-blur-lg">
+      <header className="sticky top-0 z-40 border-b border-ink-200/80 bg-white/85 backdrop-blur-lg on-dark:border-white/10 on-dark:bg-ink-950/85">
         <Container className="flex h-18 items-center justify-between gap-6">
           <Logo />
           <DesktopNav {...nav} />
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <ButtonLink href={requestHref()} className="hidden sm:inline-flex">
               Start a Request
               <ArrowRight

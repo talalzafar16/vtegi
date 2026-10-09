@@ -38,10 +38,7 @@ export function Eyebrow({ className, children, ...props }: ComponentProps<'p'>) 
 export function Lead({ className, ...props }: ComponentProps<'p'>) {
   return (
     <p
-      className={cn(
-        'text-lg text-pretty text-zinc-600 md:text-xl on-dark:text-zinc-400',
-        className,
-      )}
+      className={cn('text-lg text-pretty text-ink-600 md:text-xl on-dark:text-ink-400', className)}
       {...props}
     />
   )

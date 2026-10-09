@@ -38,7 +38,7 @@ export function Marquee({ children, duration = 40, className }: MarqueeProps) {
         type="button"
         onClick={() => setPaused(!paused)}
         aria-label={paused ? 'Play scrolling logos' : 'Pause scrolling logos'}
-        className="absolute right-0 -bottom-8 rounded p-1 text-zinc-400 hover:text-zinc-900 motion-reduce:hidden on-dark:text-zinc-500 on-dark:hover:text-white"
+        className="absolute right-0 -bottom-8 rounded p-1 text-ink-400 hover:text-ink-900 motion-reduce:hidden on-dark:text-ink-500 on-dark:hover:text-white"
       >
         {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
       </button>

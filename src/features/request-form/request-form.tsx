@@ -122,7 +122,7 @@ export function RequestForm({ solutions, defaultSolution, defaultInquiry }: Requ
       {formError && (
         <p
           role="alert"
-          className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
+          className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 on-dark:border-red-500/30 on-dark:bg-red-500/10 on-dark:text-red-300"
         >
           {formError}
         </p>
@@ -250,10 +250,10 @@ export function RequestForm({ solutions, defaultSolution, defaultInquiry }: Requ
         <Textarea {...field('message', true)} {...register('message')} maxLength={MESSAGE_MAX} />
       </Field>
 
-      <details className="group rounded-md border border-zinc-200 px-4">
-        <summary className="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-medium text-zinc-800 [&::-webkit-details-marker]:hidden">
+      <details className="group rounded-md border border-ink-200 px-4 on-dark:border-white/10">
+        <summary className="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-medium text-ink-800 on-dark:text-ink-200 [&::-webkit-details-marker]:hidden">
           Add phone and preferences
-          <span className="text-xs text-zinc-500">Optional</span>
+          <span className="text-xs text-ink-500">Optional</span>
         </summary>
         <div className="grid gap-5 pb-4 sm:grid-cols-2">
           <Field id="request-phone" label="Phone">
@@ -300,7 +300,7 @@ export function RequestForm({ solutions, defaultSolution, defaultInquiry }: Requ
         />
       )}
 
-      <p className="flex gap-2 text-xs text-zinc-500">
+      <p className="flex gap-2 text-xs text-ink-500">
         <Lock aria-hidden className="mt-0.5 size-3.5 shrink-0" />
         Please don’t include passwords, patient information, or sensitive government information.
       </p>
@@ -316,9 +316,9 @@ export function RequestForm({ solutions, defaultSolution, defaultInquiry }: Requ
           </>
         )}
       </Button>
-      <p className="text-center text-xs text-zinc-500">
+      <p className="text-center text-xs text-ink-500">
         By submitting, you agree to our{' '}
-        <Link href="/privacy" className="underline hover:text-zinc-900">
+        <Link href="/privacy" className="underline hover:text-ink-900 on-dark:hover:text-white">
           Privacy Policy
         </Link>
         .
@@ -333,11 +333,11 @@ function Success({ name, onReset }: { name: string; onReset: () => void }) {
 
   return (
     <div role="status" className="py-8 text-center">
-      <CheckCircle2 aria-hidden className="mx-auto size-12 text-brand-700" />
+      <CheckCircle2 aria-hidden className="mx-auto size-12 text-brand-700 on-dark:text-brand-400" />
       <Heading ref={heading} tabIndex={-1} as="h3" size="lg" className="mt-5 outline-none">
         Thanks, {name}. We received your request.
       </Heading>
-      <p className="mx-auto mt-3 max-w-sm text-zinc-600">
+      <p className="mx-auto mt-3 max-w-sm text-ink-600 on-dark:text-ink-400">
         A VTEGI specialist will follow up within one business day. We’ve sent a confirmation to your
         email.
       </p>

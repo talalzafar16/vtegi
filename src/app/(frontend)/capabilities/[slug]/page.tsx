@@ -60,8 +60,11 @@ export default async function CapabilityPage({ params }: Props) {
                 </Heading>
                 <ul className="mt-5 space-y-3">
                   {capability.offerings.map((offering) => (
-                    <li key={offering.id} className="flex gap-3 text-zinc-700">
-                      <Check aria-hidden className="mt-0.5 size-5 shrink-0 text-brand-700" />
+                    <li key={offering.id} className="flex gap-3 text-ink-700 on-dark:text-ink-300">
+                      <Check
+                        aria-hidden
+                        className="mt-0.5 size-5 shrink-0 text-brand-700 on-dark:text-brand-400"
+                      />
                       {offering.label}
                     </li>
                   ))}
@@ -69,11 +72,13 @@ export default async function CapabilityPage({ params }: Props) {
               </Card>
             )}
             {capability.startingContext && (
-              <Card className="bg-zinc-50">
+              <Card className="bg-ink-50 on-dark:bg-white/[0.03]">
                 <Heading as="h2" size="md">
                   Useful to share when you reach out
                 </Heading>
-                <p className="mt-3 text-zinc-600">{capability.startingContext}</p>
+                <p className="mt-3 text-ink-600 on-dark:text-ink-400">
+                  {capability.startingContext}
+                </p>
               </Card>
             )}
           </aside>
@@ -89,13 +94,13 @@ export default async function CapabilityPage({ params }: Props) {
               <li key={c.id}>
                 <Link
                   href={`/capabilities/${c.slug}`}
-                  className="group flex h-full items-center gap-4 rounded-xl border border-zinc-200 bg-white p-5 transition hover:border-zinc-900"
+                  className="group flex h-full items-center gap-4 rounded-xl border border-ink-200 bg-white p-5 transition hover:border-ink-900 on-dark:border-white/10 on-dark:bg-ink-900 on-dark:hover:border-white/40"
                 >
-                  <Icon name={c.icon} className="size-6 text-brand-700" />
+                  <Icon name={c.icon} className="size-6 text-brand-700 on-dark:text-brand-400" />
                   <span className="flex-1 font-semibold">{c.title}</span>
                   <ArrowRight
                     aria-hidden
-                    className="size-4 text-zinc-400 transition group-hover:translate-x-0.5 group-hover:text-zinc-900"
+                    className="size-4 text-ink-400 transition group-hover:translate-x-0.5 group-hover:text-ink-900 on-dark:group-hover:text-white"
                   />
                 </Link>
               </li>

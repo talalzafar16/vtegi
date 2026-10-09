@@ -55,7 +55,7 @@ export default async function CareersPage() {
         <Heading className="mt-5">Find your next role.</Heading>
         <div className="mt-10">
           {jobs.length ? (
-            <ul className="divide-y divide-zinc-200 border-y border-zinc-200">
+            <ul className="divide-y divide-ink-200 border-y border-ink-200 on-dark:divide-white/10 on-dark:border-white/10">
               {jobs.map((job) => (
                 <li key={job.id}>
                   <Link
@@ -63,10 +63,10 @@ export default async function CareersPage() {
                     className="group grid gap-3 py-6 md:grid-cols-[1fr_auto] md:items-center"
                   >
                     <span>
-                      <span className="text-lg font-semibold group-hover:text-brand-700">
+                      <span className="text-lg font-semibold group-hover:text-brand-700 on-dark:group-hover:text-brand-400">
                         {job.title}
                       </span>
-                      <span className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-sm text-zinc-600">
+                      <span className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-600 on-dark:text-ink-400">
                         <span className="inline-flex items-center gap-1.5">
                           <MapPin aria-hidden className="size-4" /> {job.location} ·{' '}
                           {labelOf(workplaceOptions, job.workplace)}
@@ -79,7 +79,7 @@ export default async function CareersPage() {
                     </span>
                     <ArrowRight
                       aria-hidden
-                      className="size-5 text-zinc-400 transition group-hover:translate-x-1 group-hover:text-zinc-900"
+                      className="size-5 text-ink-400 transition group-hover:translate-x-1 group-hover:text-ink-900 on-dark:group-hover:text-white"
                     />
                   </Link>
                 </li>
@@ -102,13 +102,13 @@ export default async function CareersPage() {
           {process.map((step, i) => (
             <li key={step.title}>
               <Card className="h-full">
-                <span className="font-mono text-xs text-brand-700">
+                <span className="font-mono text-xs text-brand-700 on-dark:text-brand-400">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <Heading as="h3" size="md" className="mt-4">
                   {step.title}
                 </Heading>
-                <p className="mt-3 text-zinc-600">{step.text}</p>
+                <p className="mt-3 text-ink-600 on-dark:text-ink-400">{step.text}</p>
               </Card>
             </li>
           ))}

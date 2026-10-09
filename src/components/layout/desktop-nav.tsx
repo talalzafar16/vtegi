@@ -17,7 +17,7 @@ type DesktopNavProps = {
 }
 
 const triggerStyles =
-  'group inline-flex h-10 items-center gap-1 rounded-md px-3 text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950 data-[state=open]:text-zinc-950'
+  'group inline-flex h-10 items-center gap-1 rounded-md px-3 text-sm font-medium text-ink-700 on-dark:text-ink-300 transition-colors hover:text-ink-950 on-dark:hover:text-white data-[state=open]:text-ink-950 on-dark:data-[state=open]:text-white'
 
 export function DesktopNav({ solutions, capabilities, phone }: DesktopNavProps) {
   return (
@@ -27,9 +27,9 @@ export function DesktopNav({ solutions, capabilities, phone }: DesktopNavProps) 
           label="Solutions"
           links={solutions}
           aside={
-            <div className="w-72 shrink-0 rounded-xl bg-zinc-950 p-6 text-white">
+            <div className="w-72 shrink-0 rounded-xl bg-ink-950 p-6 text-white dark:bg-ink-900 dark:ring-1 dark:ring-white/10">
               <p className="font-semibold">Not sure which solution is right for you?</p>
-              <p className="mt-2 text-sm text-zinc-400">
+              <p className="mt-2 text-sm text-ink-400">
                 Tell us what you need. A VTEGI specialist will follow up within one business day.
               </p>
               <NavigationMenu.Link asChild>
@@ -39,7 +39,7 @@ export function DesktopNav({ solutions, capabilities, phone }: DesktopNavProps) 
               </NavigationMenu.Link>
               <a
                 href={telHref(phone)}
-                className="mt-3 flex items-center justify-center gap-2 text-sm text-zinc-300 hover:text-white"
+                className="mt-3 flex items-center justify-center gap-2 text-sm text-ink-300 hover:text-white"
               >
                 <Phone aria-hidden className="size-4" /> {phone}
               </a>
@@ -65,7 +65,7 @@ export function DesktopNav({ solutions, capabilities, phone }: DesktopNavProps) 
       </NavigationMenu.List>
       {/* Panels render here. Positioned against the sticky header so they span its full width;
           the height animates when moving between menus. */}
-      <NavigationMenu.Viewport className="absolute inset-x-0 top-full h-(--radix-navigation-menu-viewport-height) animate-dropdown overflow-hidden border-b border-zinc-200 bg-white shadow-xl shadow-zinc-950/5 transition-[height] duration-200 motion-reduce:animate-none motion-reduce:transition-none" />
+      <NavigationMenu.Viewport className="absolute inset-x-0 top-full h-(--radix-navigation-menu-viewport-height) animate-dropdown overflow-hidden border-b border-ink-200 bg-white shadow-xl shadow-ink-950/5 transition-[height] duration-200 motion-reduce:animate-none motion-reduce:transition-none on-dark:border-white/10 on-dark:bg-ink-950" />
     </NavigationMenu.Root>
   )
 }
@@ -99,12 +99,12 @@ function MegaMenu({ label, links, aside, footer }: MegaMenuProps) {
           {aside}
         </Container>
         {footer && (
-          <div className="border-t border-zinc-100 bg-zinc-50">
+          <div className="border-t border-ink-100 bg-ink-50 on-dark:border-white/10 on-dark:bg-white/[0.03]">
             <Container className="py-4">
               <NavigationMenu.Link asChild>
                 <Link
                   href={footer.href}
-                  className="group/footer inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
+                  className="group/footer inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800 on-dark:text-brand-400 on-dark:hover:text-brand-300"
                 >
                   {footer.label}
                   <ArrowRight
@@ -126,17 +126,19 @@ function MenuLink({ link }: { link: NavLink }) {
     <NavigationMenu.Link asChild>
       <Link
         href={link.href}
-        className="group/link flex gap-4 rounded-lg p-3 transition-colors hover:bg-zinc-50 focus-visible:bg-zinc-50"
+        className="group/link flex gap-4 rounded-lg p-3 transition-colors hover:bg-ink-50 focus-visible:bg-ink-50 on-dark:hover:bg-white/5 on-dark:focus-visible:bg-white/5"
       >
         {link.icon && (
-          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700 transition-colors group-hover/link:bg-brand-700 group-hover/link:text-white">
+          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-700 transition-colors group-hover/link:bg-brand-700 group-hover/link:text-white on-dark:bg-brand-700/15 on-dark:text-brand-400">
             <Icon name={link.icon} className="size-5" />
           </span>
         )}
         <span>
-          <span className="block text-sm font-semibold text-zinc-900">{link.label}</span>
+          <span className="block text-sm font-semibold text-ink-900 on-dark:text-ink-100">
+            {link.label}
+          </span>
           {link.description && (
-            <span className="mt-1 line-clamp-2 block text-sm text-zinc-600">
+            <span className="mt-1 line-clamp-2 block text-sm text-ink-600 on-dark:text-ink-400">
               {link.description}
             </span>
           )}

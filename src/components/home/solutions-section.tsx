@@ -50,17 +50,17 @@ function SolutionCard({ solution, index }: { solution: Solution; index: number }
   return (
     <SpotlightCard className="h-full">
       <div className="flex items-start justify-between">
-        <span className="grid size-12 place-items-center rounded-lg bg-brand-50 text-brand-700 transition-colors group-hover:bg-brand-700 group-hover:text-white">
+        <span className="grid size-12 place-items-center rounded-lg bg-brand-50 text-brand-700 transition-colors group-hover:bg-brand-700 group-hover:text-white on-dark:bg-brand-700/15 on-dark:text-brand-400">
           <Icon name={solution.icon} className="size-6" />
         </span>
-        <span className="font-mono text-xs text-zinc-400">{String(index).padStart(2, '0')}</span>
+        <span className="font-mono text-xs text-ink-400">{String(index).padStart(2, '0')}</span>
       </div>
       <Heading as="h3" size="md" className="mt-8">
         {solution.title}
       </Heading>
-      <p className="mt-3 text-zinc-600">{solution.shortDescription}</p>
+      <p className="mt-3 text-ink-600 on-dark:text-ink-400">{solution.shortDescription}</p>
       {audiences && (
-        <p className="mt-4 font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
+        <p className="mt-4 font-mono text-[11px] tracking-wider text-ink-500 uppercase">
           {audiences}
         </p>
       )}
@@ -70,7 +70,7 @@ function SolutionCard({ solution, index }: { solution: Solution; index: number }
         </ButtonLink>
         <RequestLink
           solution={solution.slug}
-          className="group/request mt-5 flex items-center justify-between border-t border-zinc-100 pt-5 text-sm font-semibold text-brand-700 hover:text-brand-800"
+          className="group/request mt-5 flex items-center justify-between border-t border-ink-100 pt-5 text-sm font-semibold text-brand-700 hover:text-brand-800 on-dark:border-white/10 on-dark:text-brand-400 on-dark:hover:text-brand-300"
         >
           {solution.ctaLabel}
           <ArrowRight
@@ -88,7 +88,7 @@ function StoreCard() {
   return (
     <div
       data-tone="dark"
-      className="relative flex h-full flex-col overflow-hidden rounded-xl bg-zinc-950 p-6 text-white md:p-8"
+      className="relative flex h-full flex-col overflow-hidden rounded-xl bg-ink-950 p-6 text-white md:p-8 dark:bg-ink-900 dark:ring-1 dark:ring-white/10"
     >
       <div
         aria-hidden
@@ -103,10 +103,10 @@ function StoreCard() {
       <Heading as="h3" size="md" className="relative mt-8">
         VTEGI e-Commerce Store
       </Heading>
-      <p className="relative mt-3 text-zinc-400">
+      <p className="relative mt-3 text-ink-400">
         Browse and purchase hardware, software, and licensing directly.
       </p>
-      <p className="relative mt-4 font-mono text-[11px] tracking-wider text-zinc-500 uppercase">
+      <p className="relative mt-4 font-mono text-[11px] tracking-wider text-ink-500 uppercase">
         Hardware · Software · Licensing
       </p>
       <div className="relative mt-auto pt-8">

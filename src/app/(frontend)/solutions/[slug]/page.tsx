@@ -75,7 +75,7 @@ export default async function SolutionPage({ params }: Props) {
             <ul className="mt-8 space-y-3">
               {solution.audiences?.map((audience) => (
                 <li key={audience.id} className="flex items-center gap-3 font-medium">
-                  <Check aria-hidden className="size-5 text-brand-700" />
+                  <Check aria-hidden className="size-5 text-brand-700 on-dark:text-brand-400" />
                   {audience.label}
                 </li>
               ))}
@@ -88,13 +88,15 @@ export default async function SolutionPage({ params }: Props) {
                 <li key={capability.id}>
                   <Reveal delay={i * 0.06} className="h-full">
                     <Card className="h-full">
-                      <span className="font-mono text-xs text-zinc-400">
+                      <span className="font-mono text-xs text-ink-400">
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <Heading as="h3" size="md" className="mt-3">
                         {capability.title}
                       </Heading>
-                      <p className="mt-2 text-zinc-600">{capability.description}</p>
+                      <p className="mt-2 text-ink-600 on-dark:text-ink-400">
+                        {capability.description}
+                      </p>
                     </Card>
                   </Reveal>
                 </li>
@@ -118,7 +120,7 @@ export default async function SolutionPage({ params }: Props) {
                   <Heading as="h3" size="md" className="mt-3">
                     {scenario.title}
                   </Heading>
-                  <p className="mt-2 text-zinc-400">{scenario.description}</p>
+                  <p className="mt-2 text-ink-400">{scenario.description}</p>
                 </Card>
               </li>
             ))}
@@ -147,13 +149,13 @@ export default async function SolutionPage({ params }: Props) {
             <li key={item.id}>
               <Link
                 href={`/solutions/${item.slug}`}
-                className="group flex h-full items-center gap-4 rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-900"
+                className="group flex h-full items-center gap-4 rounded-xl border border-ink-200 p-5 transition hover:border-ink-900 on-dark:border-white/10 on-dark:hover:border-white/40"
               >
-                <Icon name={item.icon} className="size-6 text-brand-700" />
+                <Icon name={item.icon} className="size-6 text-brand-700 on-dark:text-brand-400" />
                 <span className="flex-1 font-semibold">{item.title}</span>
                 <ArrowRight
                   aria-hidden
-                  className="size-4 text-zinc-400 transition group-hover:translate-x-0.5 group-hover:text-zinc-900"
+                  className="size-4 text-ink-400 transition group-hover:translate-x-0.5 group-hover:text-ink-900 on-dark:group-hover:text-white"
                 />
               </Link>
             </li>

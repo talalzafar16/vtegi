@@ -36,7 +36,7 @@ export default async function AboutPage() {
             <Reveal key={item.label} delay={i * 0.08} className="h-full">
               <Card className="h-full lg:p-10">
                 <Eyebrow>{item.label}</Eyebrow>
-                <p className="mt-5 text-xl leading-relaxed text-pretty text-zinc-800">
+                <p className="mt-5 text-xl leading-relaxed text-pretty text-ink-800 on-dark:text-ink-200">
                   {item.text}
                 </p>
               </Card>
@@ -54,13 +54,13 @@ export default async function AboutPage() {
               <li key={value.id}>
                 <Reveal delay={i * 0.06} className="h-full">
                   <Card className="h-full">
-                    <span className="font-mono text-xs text-brand-700">
+                    <span className="font-mono text-xs text-brand-700 on-dark:text-brand-400">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <Heading as="h3" size="md" className="mt-4">
                       {value.title}
                     </Heading>
-                    <p className="mt-3 text-sm text-zinc-600">{value.text}</p>
+                    <p className="mt-3 text-sm text-ink-600 on-dark:text-ink-400">{value.text}</p>
                   </Card>
                 </Reveal>
               </li>
@@ -95,8 +95,11 @@ function LabelList({ title, items, icon }: LabelListProps) {
       <Eyebrow>{title}</Eyebrow>
       <ul className="mt-6 grid gap-3 sm:grid-cols-2">
         {items.map((item) => (
-          <li key={item.id ?? item.label} className="flex gap-3 text-zinc-700">
-            <ItemIcon aria-hidden className="mt-0.5 size-5 shrink-0 text-brand-700" />
+          <li key={item.id ?? item.label} className="flex gap-3 text-ink-700 on-dark:text-ink-300">
+            <ItemIcon
+              aria-hidden
+              className="mt-0.5 size-5 shrink-0 text-brand-700 on-dark:text-brand-400"
+            />
             {item.label}
           </li>
         ))}

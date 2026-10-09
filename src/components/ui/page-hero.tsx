@@ -15,7 +15,10 @@ type PageHeroProps = {
 /** Dark header for inner pages: eyebrow, h1, intro and optional actions. */
 export function PageHero({ eyebrow, title, intro, children }: PageHeroProps) {
   return (
-    <section data-tone="dark" className="relative overflow-hidden bg-zinc-950 text-white">
+    <section
+      data-tone="dark"
+      className="relative overflow-hidden bg-ink-950 text-white dark:bg-ink-1000"
+    >
       <HeroBackdrop />
       <Container className="relative py-20 md:py-28">
         <Eyebrow>{eyebrow}</Eyebrow>

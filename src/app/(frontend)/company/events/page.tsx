@@ -62,21 +62,24 @@ export default async function EventsPage() {
 
 function EventList({ events }: { events: Event[] }) {
   return (
-    <ul className="divide-y divide-zinc-200 border-y border-zinc-200">
+    <ul className="divide-y divide-ink-200 border-y border-ink-200 on-dark:divide-white/10 on-dark:border-white/10">
       {events.map((event) => (
         <li key={event.id}>
           <Link
             href={`/company/events/${event.slug}`}
             className="group grid gap-3 py-6 md:grid-cols-[14rem_1fr_auto] md:items-center"
           >
-            <time dateTime={event.startDate} className="font-mono text-sm text-brand-700">
+            <time
+              dateTime={event.startDate}
+              className="font-mono text-sm text-brand-700 on-dark:text-brand-400"
+            >
               {formatDateTime(event.startDate)}
             </time>
             <span>
-              <span className="text-lg font-semibold group-hover:text-brand-700">
+              <span className="text-lg font-semibold group-hover:text-brand-700 on-dark:group-hover:text-brand-400">
                 {event.title}
               </span>
-              <span className="mt-1 flex items-center gap-1.5 text-sm text-zinc-600">
+              <span className="mt-1 flex items-center gap-1.5 text-sm text-ink-600 on-dark:text-ink-400">
                 <MapPin aria-hidden className="size-4" />
                 {labelOf(eventFormats, event.format)}
                 {event.location && ` · ${event.location}`}
@@ -84,7 +87,7 @@ function EventList({ events }: { events: Event[] }) {
             </span>
             <ArrowRight
               aria-hidden
-              className="size-5 text-zinc-400 transition group-hover:translate-x-1 group-hover:text-zinc-900"
+              className="size-5 text-ink-400 transition group-hover:translate-x-1 group-hover:text-ink-900 on-dark:group-hover:text-white"
             />
           </Link>
         </li>

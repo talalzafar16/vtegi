@@ -57,7 +57,7 @@ export default async function ContractingPage() {
         <dl className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {glance.map((item) => (
             <Card key={item.label}>
-              <dt className="font-mono text-xs tracking-wider text-zinc-500 uppercase">
+              <dt className="font-mono text-xs tracking-wider text-ink-500 uppercase">
                 {item.label}
               </dt>
               <dd className="mt-3 font-mono text-2xl font-semibold tracking-tight select-all">
@@ -72,7 +72,7 @@ export default async function ContractingPage() {
             <div>
               <Heading size="lg">NAICS codes</Heading>
               <table className="mt-6 w-full text-left text-sm">
-                <thead className="border-b border-zinc-300 font-mono text-xs tracking-wider text-zinc-500 uppercase">
+                <thead className="border-b border-ink-300 font-mono text-xs tracking-wider text-ink-500 uppercase on-dark:border-white/15">
                   <tr>
                     <th scope="col" className="py-3 pr-6 font-medium">
                       Code
@@ -82,14 +82,14 @@ export default async function ContractingPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-200">
+                <tbody className="divide-y divide-ink-200 on-dark:divide-white/10">
                   {settings.naics.map((naics) => (
                     <tr key={naics.id}>
                       <td className="py-3 pr-6 font-mono font-semibold">{naics.code}</td>
-                      <td className="py-3 text-zinc-700">
+                      <td className="py-3 text-ink-700 on-dark:text-ink-300">
                         {naics.title}
                         {naics.primary && (
-                          <span className="ml-2 rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
+                          <span className="ml-2 rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700 on-dark:bg-brand-700/15 on-dark:text-brand-400">
                             Primary
                           </span>
                         )}
@@ -109,7 +109,7 @@ export default async function ContractingPage() {
                   {settings.socioeconomic.map((item) => (
                     <li
                       key={item.id}
-                      className="rounded-lg border border-zinc-200 px-4 py-3 font-medium"
+                      className="rounded-lg border border-ink-200 px-4 py-3 font-medium on-dark:border-white/10"
                     >
                       {item.label}
                     </li>
@@ -123,10 +123,13 @@ export default async function ContractingPage() {
                 <Heading size="lg">Contract vehicles</Heading>
                 <ul className="mt-6 space-y-3">
                   {settings.contractVehicles.map((vehicle) => (
-                    <li key={vehicle.id} className="rounded-lg border border-zinc-200 px-4 py-3">
+                    <li
+                      key={vehicle.id}
+                      className="rounded-lg border border-ink-200 px-4 py-3 on-dark:border-white/10"
+                    >
                       <span className="font-medium">{vehicle.name}</span>
                       {vehicle.contractNumber && (
-                        <span className="mt-1 block font-mono text-sm text-zinc-500">
+                        <span className="mt-1 block font-mono text-sm text-ink-500">
                           {vehicle.contractNumber}
                         </span>
                       )}
@@ -145,7 +148,7 @@ export default async function ContractingPage() {
                     return (
                       <li
                         key={cert.id}
-                        className="flex items-center gap-3 rounded-lg border border-zinc-200 px-4 py-3 text-sm font-medium"
+                        className="flex items-center gap-3 rounded-lg border border-ink-200 px-4 py-3 text-sm font-medium on-dark:border-white/10"
                       >
                         {logo?.url && (
                           <Image
@@ -153,7 +156,7 @@ export default async function ContractingPage() {
                             alt=""
                             width={logo.width ?? 80}
                             height={logo.height ?? 80}
-                            className="size-8 rounded bg-zinc-900 object-contain p-0.5"
+                            className="size-8 rounded bg-ink-900 object-contain p-0.5"
                           />
                         )}
                         {cert.name}

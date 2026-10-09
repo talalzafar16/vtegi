@@ -36,7 +36,7 @@ export default async function NewsPage() {
                 <li key={post.id}>
                   <Reveal delay={i * 0.05}>
                     <Link href={`/company/news/${post.slug}`} className="group block">
-                      <div className="aspect-[16/10] overflow-hidden rounded-xl bg-zinc-100">
+                      <div className="aspect-[16/10] overflow-hidden rounded-xl bg-ink-100 on-dark:bg-white/5">
                         {cover?.url && (
                           <Image
                             src={cover.url}
@@ -49,14 +49,16 @@ export default async function NewsPage() {
                       </div>
                       <time
                         dateTime={post.publishedAt}
-                        className="mt-5 block font-mono text-xs tracking-wider text-zinc-500 uppercase"
+                        className="mt-5 block font-mono text-xs tracking-wider text-ink-500 uppercase"
                       >
                         {formatDate(post.publishedAt)}
                       </time>
-                      <h2 className="mt-2 text-xl font-semibold group-hover:text-brand-700">
+                      <h2 className="mt-2 text-xl font-semibold group-hover:text-brand-700 on-dark:group-hover:text-brand-400">
                         {post.title}
                       </h2>
-                      <p className="mt-2 line-clamp-3 text-zinc-600">{post.excerpt}</p>
+                      <p className="mt-2 line-clamp-3 text-ink-600 on-dark:text-ink-400">
+                        {post.excerpt}
+                      </p>
                     </Link>
                   </Reveal>
                 </li>

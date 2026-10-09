@@ -40,14 +40,14 @@ export function RequestSection({
             <ol className="space-y-10">
               {steps.map((step, i) => (
                 <li key={step.id} className="relative flex gap-6">
-                  <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-full border border-zinc-300 bg-white font-mono text-sm font-semibold">
+                  <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-full border border-ink-300 bg-white font-mono text-sm font-semibold on-dark:border-white/15 on-dark:bg-ink-900">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div className="pt-1.5">
                     <Heading as="h3" size="md">
                       {step.title}
                     </Heading>
-                    <p className="mt-2 text-zinc-600">{step.text}</p>
+                    <p className="mt-2 text-ink-600 on-dark:text-ink-400">{step.text}</p>
                   </div>
                 </li>
               ))}
@@ -55,12 +55,13 @@ export function RequestSection({
           </div>
         </div>
 
-        <Card className="shadow-xl shadow-zinc-950/5 lg:p-10">
+        <Card className="shadow-xl shadow-ink-950/5 lg:p-10">
           <Heading as="h3" size="lg">
             Start a Request
           </Heading>
-          <p className="mt-2 mb-8 text-zinc-600">
-            Fields marked <span className="text-brand-700">*</span> are required.
+          <p className="mt-2 mb-8 text-ink-600 on-dark:text-ink-400">
+            Fields marked <span className="text-brand-700 on-dark:text-brand-400">*</span> are
+            required.
           </p>
           {/* The form reads ?solution= from the URL, so it renders on the client. */}
           <Suspense fallback={<FormSkeleton />}>
@@ -80,7 +81,10 @@ function FormSkeleton() {
   return (
     <div aria-hidden className="space-y-5">
       {['h-11', 'h-11', 'h-11', 'h-32', 'h-13'].map((height, i) => (
-        <div key={i} className={`${height} animate-pulse rounded-md bg-zinc-100`} />
+        <div
+          key={i}
+          className={`${height} animate-pulse rounded-md bg-ink-100 on-dark:bg-white/5`}
+        />
       ))}
     </div>
   )

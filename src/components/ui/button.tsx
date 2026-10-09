@@ -6,9 +6,9 @@ import { cn } from '@/lib/utils'
 const variants = {
   primary: 'bg-brand-700 text-white shadow-sm hover:bg-brand-800',
   secondary:
-    'bg-zinc-900 text-white hover:bg-zinc-800 on-dark:bg-white on-dark:text-zinc-900 on-dark:hover:bg-zinc-200',
+    'bg-ink-900 text-white hover:bg-ink-800 on-dark:bg-white on-dark:text-ink-900 on-dark:hover:bg-ink-200',
   outline:
-    'border border-zinc-300 text-zinc-900 hover:border-zinc-900 on-dark:border-white/20 on-dark:text-white on-dark:hover:border-white',
+    'border border-ink-300 text-ink-900 hover:border-ink-900 on-dark:border-white/20 on-dark:text-white on-dark:hover:border-white',
   link: 'h-auto px-0 text-brand-700 hover:text-brand-800 on-dark:text-brand-400 on-dark:hover:text-brand-300',
 }
 

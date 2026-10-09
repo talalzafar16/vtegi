@@ -15,7 +15,10 @@ export function Hero({ content, trust }: HeroProps) {
   const lines = content.headline.split('\n').filter(Boolean)
 
   return (
-    <section data-tone="dark" className="relative overflow-hidden bg-zinc-950 text-white">
+    <section
+      data-tone="dark"
+      className="relative overflow-hidden bg-ink-950 text-white dark:bg-ink-1000"
+    >
       <HeroBackdrop />
 
       <Container className="relative grid items-center gap-12 py-16 md:py-20 lg:grid-cols-[1.15fr_1fr]">
@@ -50,7 +53,7 @@ export function Hero({ content, trust }: HeroProps) {
                 Explore solutions
               </ButtonLink>
             </div>
-            <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-3 text-sm text-zinc-400">
+            <ul className="mt-12 flex flex-wrap gap-x-6 gap-y-3 text-sm text-ink-400">
               {trust.map((item) => (
                 <li key={item} className="flex items-center gap-2">
                   <Check aria-hidden className="size-4 text-brand-500" />
@@ -62,6 +65,11 @@ export function Hero({ content, trust }: HeroProps) {
         </div>
         <div className="relative mx-auto hidden w-full max-w-[560px] md:block">
           <Globe />
+          {/* Coordinates of the real HQ marker on the globe. */}
+          <p className="mt-2 flex items-center justify-center gap-3 font-mono text-[11px] tracking-[0.18em] text-ink-500 uppercase">
+            <span aria-hidden className="size-1.5 rounded-full bg-brand-500" />
+            HQ · 38.42°N 77.41°W · Stafford, VA
+          </p>
         </div>
       </Container>
     </section>

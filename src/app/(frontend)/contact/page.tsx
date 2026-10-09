@@ -38,7 +38,7 @@ export default async function ContactPage() {
           <ContactCard icon={<Phone aria-hidden className="size-5" />} title="Call us">
             <a
               href={telHref(settings.phone)}
-              className="text-lg font-semibold hover:text-brand-700"
+              className="text-lg font-semibold hover:text-brand-700 on-dark:hover:text-brand-400"
             >
               {settings.phone}
             </a>
@@ -46,7 +46,7 @@ export default async function ContactPage() {
           <ContactCard icon={<Mail aria-hidden className="size-5" />} title="Email us">
             <a
               href={`mailto:${settings.email}`}
-              className="text-lg font-semibold hover:text-brand-700"
+              className="text-lg font-semibold hover:text-brand-700 on-dark:hover:text-brand-400"
             >
               {settings.email}
             </a>
@@ -57,14 +57,14 @@ export default async function ContactPage() {
               icon={<MapPin aria-hidden className="size-5" />}
               title={office.label}
             >
-              <address className="whitespace-pre-line text-zinc-700 not-italic">
+              <address className="whitespace-pre-line text-ink-700 not-italic on-dark:text-ink-300">
                 {office.address}
               </address>
               <a
                 href={mapsHref(office.address)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800"
+                className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:text-brand-800 on-dark:text-brand-400 on-dark:hover:text-brand-300"
               >
                 Map & directions <ArrowUpRight aria-hidden className="size-3.5" />
               </a>
@@ -94,7 +94,7 @@ function ContactCard({
 }) {
   return (
     <Card className="h-full">
-      <span className="grid size-10 place-items-center rounded-lg bg-brand-50 text-brand-700">
+      <span className="grid size-10 place-items-center rounded-lg bg-brand-50 text-brand-700 on-dark:bg-brand-700/15 on-dark:text-brand-400">
         {icon}
       </span>
       <Heading as="h2" size="md" className="mt-5">

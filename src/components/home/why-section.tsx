@@ -18,7 +18,7 @@ export function WhySection({ heading, text, stats, credentials }: WhySectionProp
           <Lead className="mt-6">{text}</Lead>
           <ul className="mt-10 grid gap-3 sm:grid-cols-2">
             {credentials.map((item) => (
-              <li key={item} className="flex gap-3 text-sm text-zinc-300">
+              <li key={item} className="flex gap-3 text-sm text-ink-300">
                 <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-brand-500" />
                 {item}
               </li>
@@ -33,7 +33,7 @@ export function WhySection({ heading, text, stats, credentials }: WhySectionProp
           <dl className="grid grid-cols-2 gap-x-8 gap-y-12 self-center">
             {stats.map((stat) => (
               <div key={stat.id} className="flex flex-col-reverse border-t border-white/15 pt-6">
-                <dt className="mt-3 text-sm text-zinc-400">{stat.label}</dt>
+                <dt className="mt-3 text-sm text-ink-400">{stat.label}</dt>
                 <dd className="text-5xl font-bold font-stretch-semi-expanded md:text-6xl">
                   <Counter to={stat.value} suffix={stat.suffix ?? ''} />
                 </dd>

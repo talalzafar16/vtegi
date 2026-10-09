@@ -28,12 +28,12 @@ export default async function NotFound() {
           Start a Request
         </ButtonLink>
       </div>
-      <ul className="mt-16 grid gap-x-8 gap-y-3 border-t border-zinc-200 pt-8 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-16 grid gap-x-8 gap-y-3 border-t border-ink-200 pt-8 sm:grid-cols-2 lg:grid-cols-3 on-dark:border-white/10">
         {solutions.map((solution) => (
           <li key={solution.id}>
             <Link
               href={`/solutions/${solution.slug}`}
-              className="group inline-flex items-center gap-2 font-medium hover:text-brand-700"
+              className="group inline-flex items-center gap-2 font-medium hover:text-brand-700 on-dark:hover:text-brand-400"
             >
               {solution.title}
               <ArrowRight
