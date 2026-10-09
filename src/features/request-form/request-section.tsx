@@ -1,0 +1,87 @@
+import { Suspense } from 'react'
+
+import { ScrollLine } from '@/components/motion/scroll-line'
+import { Card } from '@/components/ui/card'
+import { Section } from '@/components/ui/section'
+import { Eyebrow, Heading, Lead } from '@/components/ui/typography'
+import type { HomePage, Solution } from '@/payload-types'
+
+import { RequestForm, type RequestFormProps } from './request-form'
+
+type RequestSectionProps = HomePage['process'] &
+  Pick<RequestFormProps, 'defaultSolution' | 'defaultInquiry'> & {
+    solutions: Pick<Solution, 'slug' | 'title'>[]
+    /** Use "h1" when this section is the main content of the page (e.g. /request). */
+    headingAs?: 'h1' | 'h2'
+  }
+
+/** Steps 2–3 of the request flow: the process next to the form. Used on several pages. */
+export function RequestSection({
+  heading,
+  intro,
+  steps,
+  solutions,
+  headingAs,
+  defaultSolution,
+  defaultInquiry,
+}: RequestSectionProps) {
+  return (
+    <Section id="request" tone="muted">
+      <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+        <div>
+          <Eyebrow>Steps 02 – 03 / Let&apos;s get started</Eyebrow>
+          <Heading as={headingAs} className="mt-5">
+            {heading}
+          </Heading>
+          <Lead className="mt-5">{intro}</Lead>
+
+          <div className="relative mt-12">
+            <ScrollLine className="absolute top-5 bottom-5 left-5" />
+            <ol className="space-y-10">
+              {steps.map((step, i) => (
+                <li key={step.id} className="relative flex gap-6">
+                  <span className="relative z-10 grid size-10 shrink-0 place-items-center rounded-full border border-zinc-300 bg-white font-mono text-sm font-semibold">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div className="pt-1.5">
+                    <Heading as="h3" size="md">
+                      {step.title}
+                    </Heading>
+                    <p className="mt-2 text-zinc-600">{step.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        <Card className="shadow-xl shadow-zinc-950/5 lg:p-10">
+          <Heading as="h3" size="lg">
+            Start a Request
+          </Heading>
+          <p className="mt-2 mb-8 text-zinc-600">
+            Fields marked <span className="text-brand-700">*</span> are required.
+          </p>
+          {/* The form reads ?solution= from the URL, so it renders on the client. */}
+          <Suspense fallback={<FormSkeleton />}>
+            <RequestForm
+              solutions={solutions.map(({ slug, title }) => ({ slug, title }))}
+              defaultSolution={defaultSolution}
+              defaultInquiry={defaultInquiry}
+            />
+          </Suspense>
+        </Card>
+      </div>
+    </Section>
+  )
+}
+
+function FormSkeleton() {
+  return (
+    <div aria-hidden className="space-y-5">
+      {['h-11', 'h-11', 'h-11', 'h-32', 'h-13'].map((height, i) => (
+        <div key={i} className={`${height} animate-pulse rounded-md bg-zinc-100`} />
+      ))}
+    </div>
+  )
+}
