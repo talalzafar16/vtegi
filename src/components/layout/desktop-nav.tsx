@@ -64,9 +64,10 @@ export function DesktopNav({ solutions, capabilities, phone }: DesktopNavProps) 
           </NavigationMenu.Item>
         ))}
       </NavigationMenu.List>
-      {/* Panels render here. Positioned against the sticky header so they span its full width;
-          the height animates when moving between menus. */}
-      <NavigationMenu.Viewport className="absolute inset-x-0 top-full h-(--radix-navigation-menu-viewport-height) animate-dropdown overflow-hidden border-b border-ink-200 bg-white shadow-2xl shadow-ink-950/[0.06] transition-[height] duration-300 motion-reduce:animate-none motion-reduce:transition-none on-dark:border-white/10 on-dark:bg-ink-950" />
+      {/* Panels render here. Positioned against the sticky header so they span its full width.
+          The panel grows down from the header on open, folds back up on close, and its height
+          eases between menus. */}
+      <NavigationMenu.Viewport className="absolute inset-x-0 top-full h-(--radix-navigation-menu-viewport-height) overflow-hidden border-b border-ink-200 bg-white shadow-2xl shadow-ink-950/[0.06] transition-[height] duration-500 motion-safe:data-[state=closed]:animate-menu-close motion-safe:data-[state=open]:animate-menu-open motion-reduce:transition-none on-dark:border-white/10 on-dark:bg-ink-950" />
     </NavigationMenu.Root>
   )
 }
@@ -88,7 +89,7 @@ function MegaMenu({ label, links, aside, footer }: MegaMenuProps) {
           className="size-4 transition-transform group-data-[state=open]:rotate-180 motion-reduce:transition-none"
         />
       </NavigationMenu.Trigger>
-      <NavigationMenu.Content className="w-full">
+      <NavigationMenu.Content className="w-full motion-safe:animate-menu-items">
         <Container className="flex gap-10 py-8">
           <ul className="grid flex-1 content-start gap-1 md:grid-cols-2 xl:grid-cols-3">
             {links.map((link) => (
