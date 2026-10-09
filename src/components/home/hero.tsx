@@ -63,14 +63,7 @@ export function Hero({ content, trust }: HeroProps) {
             </ul>
           </div>
         </div>
-        <div className="relative mx-auto hidden w-full max-w-[560px] md:block">
-          <Globe />
-          {/* Coordinates of the real HQ marker on the globe. */}
-          <p className="mt-2 flex items-center justify-center gap-3 font-mono text-[11px] tracking-[0.18em] text-ink-500 uppercase">
-            <span aria-hidden className="size-1.5 rounded-full bg-brand-500" />
-            HQ · 38.42°N 77.41°W · Stafford, VA
-          </p>
-        </div>
+        <Globe className="relative mx-auto hidden w-full max-w-[560px] md:block" />
       </Container>
     </section>
   )

@@ -72,6 +72,7 @@
   --animate-slide-in: slide-in 450ms var(--ease-out-quint);
   --animate-line-up: line-up 900ms var(--ease-out-quint) both;
   --animate-rise: rise 1000ms var(--ease-out-quint) both;
+  --animate-type: type 700ms steps(24) both;
   --animate-fade-in: fade-in 1200ms ease-out both;
   --animate-highlight: highlight 1600ms ease-out;
 
@@ -116,6 +117,16 @@
   @keyframes fade-in {
     from {
       opacity: 0;
+    }
+  }
+
+  /* Mono readouts type out left to right (intro coordinates, globe readout). */
+  @keyframes type {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
     }
   }
 
@@ -256,7 +267,7 @@ html[data-intro] .intro {
   animation: intro-mark 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .intro-coords {
-  animation: intro-type 0.8s steps(30) 0.4s both;
+  animation: type 0.8s steps(30) 0.4s both;
 }
 .intro-count {
   counter-reset: intro var(--intro-count);
@@ -281,14 +292,6 @@ html[data-intro] .intro {
   from {
     opacity: 0;
     transform: scale(0.75) rotate(-20deg);
-  }
-}
-@keyframes intro-type {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
   }
 }
 @keyframes intro-count {
