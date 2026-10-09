@@ -29,6 +29,10 @@ const arcs: Arc[] = reach.map((to) => ({ from: headquarters, to }))
 // Rotation that faces the continental U.S. toward the viewer.
 const usPhi = Math.PI - ((-95 * Math.PI) / 180 - Math.PI / 2)
 
+// Sway around the U.S.: how fast (higher = faster) and how far each side (radians, ~0.45 ≈ 26°).
+const SWAY_SPEED = 0.6
+const SWAY_RANGE = 0.45
+
 /** Interactive WebGL globe (cobe). Decorative, so hidden from assistive tech. */
 export function Globe({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -95,7 +99,7 @@ export function Globe({ className }: { className?: string }) {
       const tick = () => {
         if (visible && globe) {
           const t = (performance.now() - start) / 1000
-          const sway = reduceMotion ? 0 : Math.sin(t * 0.2) * 0.25
+          const sway = reduceMotion ? 0 : Math.sin(t * SWAY_SPEED) * SWAY_RANGE
           globe.update({ phi: usPhi + sway + dragOffset })
         }
         frame = requestAnimationFrame(tick)

@@ -1,9 +1,10 @@
 import { clsx, type ClassValue } from 'clsx'
 import { extendTailwindMerge } from 'tailwind-merge'
 
-// Teach tailwind-merge our custom font sizes so `text-display` isn't mistaken for a color.
+// Teach tailwind-merge our custom theme values (globals.css), so overrides like
+// `max-w-3xl` replace `max-w-site` and `text-display` isn't mistaken for a color.
 const twMerge = extendTailwindMerge({
-  extend: { theme: { text: ['display', 'title'] } },
+  extend: { theme: { text: ['display', 'title'], container: ['site'] } },
 })
 
 /** Merge class names, letting later Tailwind classes override earlier ones. */
