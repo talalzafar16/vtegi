@@ -2,6 +2,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { resendAdapter } from '@payloadcms/email-resend'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
@@ -20,6 +21,7 @@ import { Users } from './collections/Users'
 import { AboutPage } from './globals/AboutPage'
 import { HomePage } from './globals/HomePage'
 import { SiteSettings } from './globals/SiteSettings'
+import { s3Bucket, s3ClientConfig } from './lib/s3'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -56,6 +58,14 @@ export default buildConfig({
       })
     : undefined,
   plugins: [
+    // Uploads go to S3-compatible storage (Supabase Storage) when configured; otherwise to /media.
+    // Files are still served through Payload at /api/media/file/..., so the bucket can stay private.
+    s3Storage({
+      enabled: Boolean(s3Bucket),
+      collections: { media: true },
+      bucket: s3Bucket,
+      config: s3ClientConfig,
+    }),
     seoPlugin({
       collections: ['solutions', 'capabilities', 'pages', 'news', 'events', 'jobs'],
       uploadsCollection: 'media',

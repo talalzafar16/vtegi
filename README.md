@@ -92,7 +92,29 @@ yarn seed
 
 Loads real VTEGI content (site settings, solutions, capabilities, partners with logos).
 Safe to re-run: it only creates what is missing and never overwrites admin edits.
-Uploaded files are stored in `/media` locally (git-ignored); production will use cloud storage.
+
+## Uploads (images and PDFs)
+
+When the `S3_*` variables are set, uploads are stored in **Supabase Storage** (S3 protocol);
+otherwise in the local `/media` folder (git-ignored). Files are always served through Payload
+(`/api/media/file/...`), so the bucket can stay private.
+
+To copy existing local uploads to the bucket (one time), add the `S3_*` variables to `.env`, then:
+
+```bash
+yarn media:upload
+```
+
+## Deploying to Vercel (preview)
+
+1. **Supabase Storage:** create a private bucket, then create S3 access keys
+   (Project Settings → Storage → S3 Connection).
+2. **Vercel:** import the GitHub repo and add these environment variables:
+   `DATABASE_URL`, `PAYLOAD_SECRET`, `S3_BUCKET`, `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`,
+   `S3_SECRET_ACCESS_KEY`, and `NOINDEX=true` (keeps the preview out of search engines).
+3. Run `yarn media:upload` locally once so existing images are in the bucket, then deploy.
+
+Optional: `RESEND_API_KEY` + `EMAIL_FROM` (emails) and the Turnstile keys (spam protection).
 
 ## Database changes
 

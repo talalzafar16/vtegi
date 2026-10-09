@@ -19,6 +19,8 @@ export const metadata: Metadata = {
     template: '%s | VTEGI',
   },
   description: 'Technology solutions built around your mission.',
+  // NOINDEX=true on preview/test deployments keeps them out of search engines.
+  robots: process.env.NOINDEX === 'true' ? { index: false, follow: false } : undefined,
 }
 
 export default function FrontendLayout({ children }: { children: ReactNode }) {
