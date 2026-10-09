@@ -195,8 +195,9 @@
   initial-value: 0;
 }
 
+/* The scrollbar stays (hiding it would shift the page when it returns), dark to match the panel. */
 html[data-intro] {
-  overflow: hidden;
+  scrollbar-color: var(--color-ink-800) var(--color-ink-1000);
 }
 html[data-intro='hold'] main * {
   animation-play-state: paused;
@@ -272,9 +273,13 @@ html[data-intro] .intro {
 }
 
 @layer base {
-  /* Native controls (scrollbars, date pickers, autofill) follow the theme. */
+  /* Native controls (date pickers, autofill) follow the theme; scrollbars use the ink tones. */
+  html {
+    scrollbar-color: var(--color-ink-300) var(--color-ink-50);
+  }
   .dark {
     color-scheme: dark;
+    scrollbar-color: var(--color-ink-700) var(--color-ink-1000);
   }
 
   /* Dark mode: a faint film grain over the page so dark surfaces feel printed, not flat. */
