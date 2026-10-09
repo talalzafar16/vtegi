@@ -184,6 +184,85 @@
   }
 }
 
+/*
+ * First-visit intro (components/layout/intro-loader.tsx). Its inline script sets data-intro on
+ * <html> once per browser session: "hold" while the overlay covers the page (page animations wait
+ * underneath), "exit" while it lifts (they play), then removes it. All of the timing lives here.
+ */
+@property --intro-count {
+  syntax: '<integer>';
+  inherits: false;
+  initial-value: 0;
+}
+
+html[data-intro] {
+  overflow: hidden;
+}
+html[data-intro='hold'] main * {
+  animation-play-state: paused;
+}
+
+.intro {
+  display: none;
+}
+html[data-intro] .intro {
+  --intro-load: 1.3s; /* how long the counter and red line take to reach 100% */
+  display: grid;
+  animation: intro-exit 0.7s cubic-bezier(0.76, 0, 0.24, 1) calc(var(--intro-load) + 0.2s) forwards;
+}
+.intro-mark {
+  animation: intro-mark 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.intro-coords {
+  animation: intro-type 0.8s steps(30) 0.4s both;
+}
+.intro-count {
+  counter-reset: intro var(--intro-count);
+  animation: intro-count var(--intro-load) cubic-bezier(0.65, 0, 0.35, 1) 0.1s both;
+}
+.intro-count::after {
+  content: counter(intro) '%';
+}
+.intro-line {
+  transform-origin: left;
+  animation: intro-line var(--intro-load) cubic-bezier(0.65, 0, 0.35, 1) 0.1s both;
+}
+
+/* The panel lifts away; the red line on its bottom edge sweeps up the page. */
+@keyframes intro-exit {
+  to {
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+}
+@keyframes intro-mark {
+  from {
+    opacity: 0;
+    transform: scale(0.75) rotate(-20deg);
+  }
+}
+@keyframes intro-type {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes intro-count {
+  from {
+    --intro-count: 0;
+  }
+  to {
+    --intro-count: 100;
+  }
+}
+@keyframes intro-line {
+  from {
+    transform: scaleX(0);
+  }
+}
+
 /* Theme switch: the new theme is revealed as a circle growing from the toggle
    (animated in theme-toggle.tsx), so the default cross-fade is turned off. */
 ::view-transition-old(root),
