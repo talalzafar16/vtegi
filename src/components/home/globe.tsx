@@ -3,8 +3,7 @@
 import type { Globe as CobeGlobe } from 'cobe'
 import { useEffect, useRef, useState } from 'react'
 
-type LatLng = [number, number]
-type Rgb = [number, number, number]
+import { createOverlay, SATELLITES, type LatLng } from './globe-overlay'
 
 const headquarters: LatLng = [38.4221, -77.4083] // Stafford, VA
 const hubzoneOffice: LatLng = [38.9072, -77.0369] // Washington, DC
@@ -25,22 +24,17 @@ const reach: LatLng[] = [
 // Rotation that faces the continental U.S. toward the viewer, and the default tilt.
 const usPhi = Math.PI - ((-95 * Math.PI) / 180 - Math.PI / 2)
 const baseTheta = 0.45
+// Globe size within its canvas (cobe's scale), leaving room around it for the satellite orbits.
+const GLOBE_SCALE = 0.86
+const ARC_HEIGHT = 0.25
 
 // Feel. Times are in seconds.
 const SWAY_SPEED = 0.6 // idle sway around the U.S.: speed…
 const SWAY_RANGE = 0.45 // …and reach each side (radians, ~26°)
 const ENTRANCE = 2.2 // one full turn that settles on the U.S.
-const LINK_CYCLE = 6 // each link fires again after this long…
-const LINK_ON = 0.4 // …glowing for this share of its cycle, so 3–4 glow at any moment
-const READOUT_EVERY = 2.4 // the readout switches to the newest link at most this often
+const READOUT_EVERY = 2.4 // the readout changes at most this often
 const FRICTION = 0.94 // share of fling speed kept each frame
 const SPRING = 0.035 // how quickly a released globe drifts back to face the U.S.
-
-const ARC_REST: Rgb = [0.5, 0.07, 0.07]
-const ARC_LIVE: Rgb = [1, 0.42, 0.36]
-
-// Golden-ratio offsets: links fire in an overlapping, natural-looking order, not a chase.
-const linkOffsets = reach.map((_, i) => (i * 0.618) % 1)
 
 /** "38.42°N 77.41°W" */
 const formatLatLng = ([lat, lng]: LatLng) =>
@@ -55,53 +49,50 @@ function milesBetween([lat1, lng1]: LatLng, [lat2, lng2]: LatLng) {
   return Math.round((7918 * Math.asin(Math.sqrt(h))) / 10) * 10
 }
 
-// "39.74°N 104.99°W · 1,480 mi", all padded to one length so the centered readout doesn't jitter.
-const labels = reach.map(
-  (to) => `${formatLatLng(to)} · ${milesBetween(headquarters, to).toLocaleString('en-US')} mi`,
+// Readout lines: one per link ("HQ → 39.74°N 104.99°W · 1,480 mi"), then one per satellite
+// uplink. Padded to one length so the centered readout doesn't jitter as it changes.
+const readoutLines = [
+  ...reach.map(
+    (to) =>
+      `HQ → ${formatLatLng(to)} · ${milesBetween(headquarters, to).toLocaleString('en-US')} mi`,
+  ),
+  ...Array.from({ length: SATELLITES }, (_, n) => `SAT-0${n + 1} → HQ · uplink`),
+]
+const readouts = readoutLines.map((line) =>
+  line.padEnd(Math.max(...readoutLines.map((l) => l.length))),
 )
-const linkLabels = labels.map((label) => label.padEnd(Math.max(...labels.map((l) => l.length))))
 
 const easeOut = (x: number) => 1 - (1 - x) ** 4
 const smooth = (x: number) => x * x * (3 - 2 * x)
-const mix = (a: Rgb, b: Rgb, k: number): Rgb => [
-  a[0] + (b[0] - a[0]) * k,
-  a[1] + (b[1] - a[1]) * k,
-  a[2] + (b[2] - a[2]) * k,
-]
 /** Same angle within -π..π, so a released globe springs back the short way round. */
 const wrap = (angle: number) => angle - 2 * Math.PI * Math.round(angle / (2 * Math.PI))
 
-/** Brightness of a link at a point in its cycle (0..1): quick flare, slow fade, then rest. */
-function linkGlow(phase: number) {
-  if (phase >= LINK_ON) return 0
-  const x = phase / LINK_ON
-  return x < 0.2 ? smooth(x / 0.2) : 1 - smooth((x - 0.2) / 0.8)
-}
-
 /**
- * Interactive WebGL globe (cobe) with a mono readout underneath. It spins in and settles on the
- * U.S., then links from HQ flare up across the country, several at a time (the readout types out
- * the newest). Drag to spin or tilt it; let go and it coasts, then drifts back.
- * Reduced motion: a still globe.
+ * Interactive WebGL globe (cobe) with satellites, data packets and a mono readout. It spins in
+ * and settles on the U.S.; then packets fly from HQ across the country, pinging where they land,
+ * while satellites orbit and beam uplinks down to HQ. Drag to spin or tilt it; let go and it
+ * coasts, then drifts back. Reduced motion: a still globe with its orbits.
  */
 export function Globe({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [activeLink, setActiveLink] = useState(-1)
+  const overlayRef = useRef<HTMLCanvasElement>(null)
+  const [readout, setReadout] = useState(-1)
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    const overlayCanvas = overlayRef.current
+    if (!canvas || !overlayCanvas) return
 
     const html = document.documentElement
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const dpr = Math.min(window.devicePixelRatio, 2)
     let globe: CobeGlobe | undefined
+    let overlay: ReturnType<typeof createOverlay> | undefined
     let frame = 0
     let cancelled = false
     let visible = true
     let last = performance.now()
     let entranceStart: number | null = null
-    let shownLink = -1
     let readoutAt = 0
 
     // Dragging: rotation (spin) and tilt offsets, plus fling speed for momentum.
@@ -143,7 +134,7 @@ export function Globe({ className }: { className?: string }) {
     canvas.addEventListener('pointercancel', onUp)
 
     const render = (now: number, dt: number) => {
-      if (!globe) return
+      if (!globe || !overlay) return
       // The entrance waits while the first-visit intro still covers the page.
       if (entranceStart === null && html.dataset.intro !== 'hold') entranceStart = now
       const t = entranceStart === null ? 0 : (now - entranceStart) / 1000
@@ -161,43 +152,39 @@ export function Globe({ className }: { className?: string }) {
         }
       }
 
-      // Links fade in as the globe settles, then each flares on its own staggered cycle.
-      const linkTime = reduceMotion ? 0 : Math.max(0, t - ENTRANCE * 0.6)
-      const linksIn = smooth(Math.min(1, linkTime))
-      const phases = linkOffsets.map((offset) => (linkTime / LINK_CYCLE + offset) % 1)
-      const glows = phases.map((phase) => linkGlow(phase) * linksIn)
-
-      // Readout: the link that fired most recently, but no more often than READOUT_EVERY.
-      if (linksIn === 1 && now - readoutAt > READOUT_EVERY * 1000) {
-        const newest = phases.indexOf(Math.min(...phases))
-        if (newest !== shownLink) {
-          shownLink = newest
-          readoutAt = now
-          setActiveLink(newest)
-        }
-      }
-
       const sway = reduceMotion ? 0 : Math.sin((now / 1000) * SWAY_SPEED) * SWAY_RANGE
+      const phi = usPhi + sway + spin - (1 - entered) * 2 * Math.PI
+      const theta = baseTheta + tilt
+      const scale = GLOBE_SCALE * (0.85 + 0.15 * entered)
       globe.update({
-        phi: usPhi + sway + spin - (1 - entered) * 2 * Math.PI,
-        theta: baseTheta + tilt,
-        scale: 0.85 + 0.15 * entered,
-        arcs: reach.map((to, i) => ({
-          from: headquarters,
-          to,
-          // Reduced motion keeps every arc at the default red (arcColor).
-          color: reduceMotion ? undefined : mix(ARC_REST, ARC_LIVE, glows[i]),
-        })),
+        phi,
+        theta,
+        scale,
+        // HQ: a slow, steady beacon.
         markers: [
-          // HQ: a slow, steady beacon.
           {
             location: headquarters,
             size: reduceMotion ? 0.07 : 0.07 + 0.012 * Math.sin(now / 400),
           },
           { location: hubzoneOffice, size: 0.04 },
-          ...reach.map((location, i) => ({ location, size: 0.022 + 0.03 * glows[i] })),
+          ...reach.map((location) => ({ location, size: 0.022 })),
         ],
       })
+
+      // Satellites, packets and uplinks fade in as the globe settles.
+      const layerTime = Math.max(0, t - ENTRANCE * 0.5)
+      const event = overlay({
+        phi,
+        theta,
+        scale,
+        time: layerTime,
+        opacity: reduceMotion ? 1 : smooth(Math.min(1, layerTime)),
+        still: reduceMotion,
+      })
+      if (event && now - readoutAt > READOUT_EVERY * 1000) {
+        readoutAt = now
+        setReadout('link' in event ? event.link : reach.length + event.satellite)
+      }
     }
 
     import('cobe').then(({ default: createGlobe }) => {
@@ -209,6 +196,7 @@ export function Globe({ className }: { className?: string }) {
         height: size,
         phi: usPhi,
         theta: baseTheta,
+        scale: GLOBE_SCALE,
         dark: 1,
         diffuse: 1.2,
         mapSamples: 16000,
@@ -216,9 +204,18 @@ export function Globe({ className }: { className?: string }) {
         baseColor: [0.24, 0.24, 0.27],
         markerColor: [0.86, 0.06, 0.06],
         glowColor: [0.32, 0.06, 0.06],
-        arcColor: [0.9, 0.12, 0.12],
-        arcWidth: 0.8,
-        arcHeight: 0.25,
+        // Arcs are quiet guide lines; the packets flying along them carry the motion.
+        arcs: reach.map((to) => ({ from: headquarters, to })),
+        arcColor: [0.55, 0.08, 0.08],
+        arcWidth: 0.6,
+        arcHeight: ARC_HEIGHT,
+      })
+      overlayCanvas.width = overlayCanvas.height = size
+      overlay = createOverlay(overlayCanvas, {
+        hq: headquarters,
+        links: reach,
+        arcHeight: ARC_HEIGHT,
+        dpr,
       })
       canvas.style.opacity = '1'
 
@@ -246,26 +243,31 @@ export function Globe({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      <canvas
-        ref={canvasRef}
-        aria-hidden
-        className="aspect-square w-full cursor-grab touch-pan-y opacity-0 transition-opacity duration-1000 active:cursor-grabbing"
-      />
-      {/* Readout: HQ coordinates at first; then where the newest link goes and how far. */}
+      <div className="relative">
+        <canvas
+          ref={canvasRef}
+          aria-hidden
+          className="aspect-square w-full cursor-grab touch-pan-y opacity-0 transition-opacity duration-1000 active:cursor-grabbing"
+        />
+        {/* Satellites, packets and pings; clicks pass through to the globe for dragging. */}
+        <canvas
+          ref={overlayRef}
+          aria-hidden
+          className="pointer-events-none absolute inset-0 size-full"
+        />
+      </div>
+      {/* Readout: HQ coordinates at first; then the latest landing or satellite uplink. */}
       <p
         aria-hidden
         className="mt-2 flex items-center justify-center gap-3 font-mono text-[11px] tracking-[0.18em] whitespace-pre text-ink-500 uppercase"
       >
         <span className="size-1.5 rounded-full bg-brand-500" />
-        {activeLink < 0 ? (
+        {readout < 0 ? (
           `HQ · ${formatLatLng(headquarters)} · Stafford, VA`
         ) : (
-          <>
-            HQ →
-            <span key={activeLink} className="animate-type text-ink-300">
-              {linkLabels[activeLink]}
-            </span>
-          </>
+          <span key={readout} className="animate-type text-ink-300">
+            {readouts[readout]}
+          </span>
         )}
       </p>
     </div>
