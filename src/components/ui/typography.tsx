@@ -3,8 +3,8 @@ import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 
 const headingSizes = {
-  display: 'text-display font-bold font-stretch-semi-expanded',
-  xl: 'text-title font-bold font-stretch-semi-expanded',
+  display: 'text-display font-semibold font-stretch-semi-expanded',
+  xl: 'text-title font-semibold font-stretch-semi-expanded',
   lg: 'text-2xl font-semibold tracking-tight md:text-3xl',
   md: 'text-xl font-semibold tracking-tight',
 }

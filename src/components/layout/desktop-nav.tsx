@@ -16,8 +16,9 @@ type DesktopNavProps = {
   phone: string
 }
 
+// The red underline draws in from the left on hover / while a menu is open (the signal line motif).
 const triggerStyles =
-  'group inline-flex h-10 items-center gap-1 rounded-md px-3 text-sm font-medium text-ink-700 on-dark:text-ink-300 transition-colors hover:text-ink-950 on-dark:hover:text-white data-[state=open]:text-ink-950 on-dark:data-[state=open]:text-white'
+  'group relative inline-flex h-10 items-center gap-1 rounded-md px-3 text-sm font-medium text-ink-700 on-dark:text-ink-300 transition-colors hover:text-ink-950 on-dark:hover:text-white data-[state=open]:text-ink-950 on-dark:data-[state=open]:text-white after:absolute after:inset-x-3 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-brand-600 after:transition-transform after:duration-500 hover:after:scale-x-100 data-[state=open]:after:scale-x-100'
 
 export function DesktopNav({ solutions, capabilities, phone }: DesktopNavProps) {
   return (
@@ -65,7 +66,7 @@ export function DesktopNav({ solutions, capabilities, phone }: DesktopNavProps) 
       </NavigationMenu.List>
       {/* Panels render here. Positioned against the sticky header so they span its full width;
           the height animates when moving between menus. */}
-      <NavigationMenu.Viewport className="absolute inset-x-0 top-full h-(--radix-navigation-menu-viewport-height) animate-dropdown overflow-hidden border-b border-ink-200 bg-white shadow-xl shadow-ink-950/5 transition-[height] duration-200 motion-reduce:animate-none motion-reduce:transition-none on-dark:border-white/10 on-dark:bg-ink-950" />
+      <NavigationMenu.Viewport className="absolute inset-x-0 top-full h-(--radix-navigation-menu-viewport-height) animate-dropdown overflow-hidden border-b border-ink-200 bg-white shadow-2xl shadow-ink-950/[0.06] transition-[height] duration-300 motion-reduce:animate-none motion-reduce:transition-none on-dark:border-white/10 on-dark:bg-ink-950" />
     </NavigationMenu.Root>
   )
 }

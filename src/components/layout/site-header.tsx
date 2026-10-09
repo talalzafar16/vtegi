@@ -48,7 +48,7 @@ export async function SiteHeader() {
         </Container>
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-ink-200/80 bg-white/85 backdrop-blur-lg on-dark:border-white/10 on-dark:bg-ink-950/85">
+      <header className="sticky top-0 z-40 border-b border-ink-200/70 bg-white/95 backdrop-blur-xl backdrop-saturate-150 on-dark:border-white/10 on-dark:bg-ink-950/85">
         <Container className="flex h-18 items-center justify-between gap-6">
           <Logo />
           <DesktopNav {...nav} />

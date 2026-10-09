@@ -57,10 +57,17 @@
   --text-title--line-height: 1.08;
   --text-title--letter-spacing: -0.03em;
 
+  /* Motion: one long, soft ease-out for the whole site, and unhurried default transitions,
+     so hovers and state changes glide instead of snapping. */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --default-transition-duration: 300ms;
+  --default-transition-timing-function: var(--ease-out-quint);
+
   --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
-  --animate-dropdown: dropdown 180ms ease-out;
-  --animate-slide-in: slide-in 250ms cubic-bezier(0.22, 1, 0.36, 1);
-  --animate-line-up: line-up 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-dropdown: dropdown 300ms var(--ease-out-quint);
+  --animate-slide-in: slide-in 450ms var(--ease-out-quint);
+  --animate-line-up: line-up 900ms var(--ease-out-quint) both;
+  --animate-rise: rise 1000ms var(--ease-out-quint) both;
   --animate-fade-in: fade-in 1200ms ease-out both;
   --animate-highlight: highlight 1600ms ease-out;
 
@@ -95,6 +102,15 @@
     }
   }
 
+  /* Content drifts up and comes into focus. */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem);
+      filter: blur(6px);
+    }
+  }
+
   /* Draws attention to a field that was filled in for the visitor. */
   @keyframes highlight {
     0%,
@@ -105,6 +121,14 @@
       box-shadow: 0 0 0 4px transparent;
     }
   }
+}
+
+/* The engineering-drawing hairline grid behind dark heroes and bands. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
 }
 
 /* Typography for CMS rich text (components/ui/rich-text.tsx). */
@@ -291,6 +315,37 @@ html[data-intro] .intro {
     pointer-events: none;
     opacity: 0.045;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Links and buttons ease between states. Utilities that set their own transition win. */
+  a,
+  button,
+  summary {
+    transition-property: color, background-color, border-color, opacity, box-shadow;
+    transition-duration: var(--default-transition-duration);
+    transition-timing-function: var(--default-transition-timing-function);
+  }
+
+  /* No lonely last words in paragraphs (headings use text-balance). */
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Accordions (<details>) glide open in browsers that support it; others open instantly. */
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+    details::details-content {
+      block-size: 0;
+      overflow-y: clip;
+      transition:
+        block-size 450ms var(--ease-out-quint),
+        content-visibility 450ms allow-discrete;
+    }
+    details[open]::details-content {
+      block-size: auto;
+    }
   }
 
   ::selection {

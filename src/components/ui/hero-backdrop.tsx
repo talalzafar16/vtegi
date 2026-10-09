@@ -7,7 +7,7 @@ export function HeroBackdrop() {
     <>
       <div
         aria-hidden
-        className="absolute inset-0 [background-image:linear-gradient(to_right,rgb(255_255_255/0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgb(255_255_255/0.045)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_70%_40%,black,transparent_70%)] [background-size:72px_72px]"
+        className="absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_70%_40%,black,transparent_70%)]"
       />
       <div
         aria-hidden

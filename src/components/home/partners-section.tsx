@@ -2,6 +2,7 @@ import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 
 import { Marquee } from '@/components/motion/marquee'
+import { Reveal } from '@/components/motion/reveal'
 import { ButtonLink } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
 import { Eyebrow, Heading } from '@/components/ui/typography'
@@ -21,7 +22,7 @@ export function PartnersSection({ heading, partners }: PartnersSectionProps) {
 
   return (
     <Section className="overflow-hidden">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <Reveal className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-2xl">
           <Eyebrow>Technology partners</Eyebrow>
           <Heading size="lg" className="mt-5">
@@ -31,7 +32,7 @@ export function PartnersSection({ heading, partners }: PartnersSectionProps) {
         <ButtonLink href="/partners" variant="link">
           View all partners <ArrowRight aria-hidden className="size-4" />
         </ButtonLink>
-      </div>
+      </Reveal>
       <Marquee className="mt-14" duration={60}>
         {logos.map((logo) => (
           <Image
@@ -40,7 +41,7 @@ export function PartnersSection({ heading, partners }: PartnersSectionProps) {
             alt={logo.name}
             width={logo.width ?? 240}
             height={logo.height ?? 120}
-            className="h-14 w-36 object-contain opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0 dark:invert dark:hover:grayscale"
+            className="h-14 w-36 object-contain opacity-60 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 dark:invert dark:hover:grayscale"
           />
         ))}
       </Marquee>

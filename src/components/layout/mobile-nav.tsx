@@ -30,8 +30,13 @@ export function MobileNav({ solutions, capabilities, phone }: MobileNavProps) {
         <Menu aria-hidden className="size-6" />
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-ink-950/40 backdrop-blur-sm lg:hidden" />
+        {/* data-lenis-prevent: wheel events here are left to the browser, so the page behind stays put. */}
+        <Dialog.Overlay
+          data-lenis-prevent
+          className="fixed inset-0 z-50 bg-ink-950/40 backdrop-blur-sm lg:hidden"
+        />
         <Dialog.Content
+          data-lenis-prevent
           aria-describedby={undefined}
           className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm animate-slide-in flex-col bg-white shadow-2xl motion-reduce:animate-none lg:hidden on-dark:bg-ink-900"
         >

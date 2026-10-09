@@ -11,11 +11,20 @@ type ExpertCtaProps = HomePage['expert'] & { phone: string }
 /** "Not sure which solution is right for you?" band from Terry's brief. */
 export function ExpertCta({ heading, text, phone }: ExpertCtaProps) {
   return (
-    <section data-tone="dark" className="bg-brand-700 text-white">
-      <Container className="flex flex-col gap-8 py-14 md:py-16 lg:flex-row lg:items-center lg:justify-between">
+    <section data-tone="dark" className="relative overflow-hidden bg-brand-900 text-white">
+      {/* Deep oxblood: logo red glowing in from the left, fading to near black, under the grid. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_0%_0%,var(--color-brand-700),transparent_65%),linear-gradient(to_right,transparent_40%,var(--color-brand-950))]"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-grid [mask-image:linear-gradient(to_right,black,transparent_80%)]"
+      />
+      <Container className="relative flex flex-col gap-8 py-16 md:py-20 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl">
           <Heading size="lg">{heading}</Heading>
-          <p className="mt-3 text-lg text-brand-100">{text}</p>
+          <p className="mt-3 text-lg text-brand-100/90">{text}</p>
         </div>
         <div className="flex flex-wrap gap-3">
           <ButtonLink href="#request" variant="secondary" size="lg">

@@ -30,7 +30,7 @@ export function Section({
       data-tone={tone}
       // Dark mode: hairline section edges give structure instead of relying on flat color blocks.
       className={cn(
-        'py-20 md:py-28 dark:border-t dark:border-white/[0.06]',
+        'py-24 md:py-32 dark:border-t dark:border-white/[0.06]',
         tones[tone],
         className,
       )}

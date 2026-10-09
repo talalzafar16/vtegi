@@ -17,7 +17,7 @@ export function SpotlightCard({ className, children, ...props }: ComponentProps<
     <Card
       onPointerMove={onPointerMove}
       className={cn(
-        'group relative overflow-hidden transition-colors hover:border-brand-700/30',
+        'group relative overflow-hidden transition-[border-color,box-shadow,translate] duration-500 hover:-translate-y-1 hover:border-brand-700/30 hover:shadow-2xl hover:shadow-ink-950/[0.07] motion-reduce:hover:translate-y-0',
         className,
       )}
       {...props}

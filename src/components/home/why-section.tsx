@@ -1,6 +1,7 @@
 import { ArrowRight, Check } from 'lucide-react'
 
 import { Counter } from '@/components/motion/counter'
+import { Reveal } from '@/components/motion/reveal'
 import { ButtonLink } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
 import { Eyebrow, Heading, Lead } from '@/components/ui/typography'
@@ -12,7 +13,7 @@ export function WhySection({ heading, text, stats, credentials }: WhySectionProp
   return (
     <Section tone="dark">
       <div className="grid gap-16 lg:grid-cols-2 lg:gap-24">
-        <div>
+        <Reveal>
           <Eyebrow>Why VTEGI</Eyebrow>
           <Heading className="mt-5">{heading}</Heading>
           <Lead className="mt-6">{text}</Lead>
@@ -27,7 +28,7 @@ export function WhySection({ heading, text, stats, credentials }: WhySectionProp
           <ButtonLink href="/contracting" variant="link" className="mt-10">
             Contracting information <ArrowRight aria-hidden className="size-4" />
           </ButtonLink>
-        </div>
+        </Reveal>
 
         {stats && stats.length > 0 && (
           <dl className="grid grid-cols-2 gap-x-8 gap-y-12 self-center">

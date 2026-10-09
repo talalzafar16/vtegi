@@ -18,13 +18,13 @@ type SolutionsSectionProps = HomePage['solutions'] & { solutions: Solution[] }
 export function SolutionsSection({ heading, intro, solutions }: SolutionsSectionProps) {
   return (
     <Section id="solutions">
-      <div className="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <Reveal className="grid gap-6 lg:grid-cols-2 lg:items-end">
         <div>
           <Eyebrow>Step 01 / Find your solution</Eyebrow>
           <Heading className="mt-5">{heading}</Heading>
         </div>
         <Lead className="lg:max-w-md lg:justify-self-end">{intro}</Lead>
-      </div>
+      </Reveal>
 
       <ul className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {solutions.map((solution, i) => (

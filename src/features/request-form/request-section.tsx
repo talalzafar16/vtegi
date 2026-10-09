@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 
+import { Reveal } from '@/components/motion/reveal'
 import { ScrollLine } from '@/components/motion/scroll-line'
 import { Card } from '@/components/ui/card'
 import { Section } from '@/components/ui/section'
@@ -29,11 +30,13 @@ export function RequestSection({
     <Section id="request" tone="muted">
       <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
         <div>
-          <Eyebrow>Steps 02 – 03 / Let&apos;s get started</Eyebrow>
-          <Heading as={headingAs} className="mt-5">
-            {heading}
-          </Heading>
-          <Lead className="mt-5">{intro}</Lead>
+          <Reveal>
+            <Eyebrow>Steps 02 – 03 / Let&apos;s get started</Eyebrow>
+            <Heading as={headingAs} className="mt-5">
+              {heading}
+            </Heading>
+            <Lead className="mt-5">{intro}</Lead>
+          </Reveal>
 
           <div className="relative mt-12">
             <ScrollLine className="absolute top-5 bottom-5 left-5" />
