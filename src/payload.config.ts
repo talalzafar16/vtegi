@@ -4,7 +4,7 @@ import { seoPlugin } from '@payloadcms/plugin-seo'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
-import { buildConfig } from 'payload'
+import { buildConfig, type CollectionConfig, type GlobalConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
@@ -25,6 +25,12 @@ import { s3Bucket, s3ClientConfig } from './lib/s3'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+/** Hides Payload's developer "API" tab (raw JSON view) on every edit screen. */
+const hideApiTab = <T extends CollectionConfig | GlobalConfig>(config: T): T => ({
+  ...config,
+  admin: { ...config.admin, hideAPIURL: true },
+})
 
 export default buildConfig({
   admin: {
@@ -49,8 +55,19 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Solutions, Capabilities, Partners, Pages, News, Events, Jobs, Leads, Media, Users],
-  globals: [HomePage, AboutPage, SiteSettings],
+  collections: [
+    Solutions,
+    Capabilities,
+    Partners,
+    Pages,
+    News,
+    Events,
+    Jobs,
+    Leads,
+    Media,
+    Users,
+  ].map(hideApiTab),
+  globals: [HomePage, AboutPage, SiteSettings].map(hideApiTab),
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

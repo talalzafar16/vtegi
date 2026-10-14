@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { anyone, isAdmin } from '@/access'
+import { anyone, isAdmin, isAdminField } from '@/access'
 import { revalidateGlobal } from '@/hooks/revalidate'
 
 /** Company facts used across the site (header, footer, contact, contracting page). */
@@ -38,6 +38,8 @@ export const SiteSettings: GlobalConfig = {
               name: 'leadEmail',
               label: 'Website request recipient',
               type: 'email',
+              // Internal inbox: kept out of the public API. The request form reads it server-side.
+              access: { read: isAdminField },
               admin: {
                 description: 'Where new website requests are sent. Defaults to the email above.',
               },
