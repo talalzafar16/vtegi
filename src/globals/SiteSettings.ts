@@ -6,7 +6,11 @@ import { revalidateGlobal } from '@/hooks/revalidate'
 /** Company facts used across the site (header, footer, contact, contracting page). */
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
-  admin: { group: 'Admin' },
+  admin: {
+    group: 'Admin',
+    description:
+      'Company details used across the website: contact, offices, credentials, agencies.',
+  },
   access: { read: anyone, update: isAdmin },
   hooks: { afterChange: [revalidateGlobal] },
   fields: [

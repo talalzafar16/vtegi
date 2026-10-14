@@ -15,6 +15,7 @@ export const Events: CollectionConfig = {
   defaultSort: '-startDate',
   admin: {
     group: 'Company',
+    description: 'Upcoming and past events, shown under Company → Events.',
     useAsTitle: 'title',
     defaultColumns: ['title', 'startDate', 'format', '_status'],
   },

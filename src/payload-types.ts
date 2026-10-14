@@ -142,6 +142,8 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * The solution cards on the home page. Each one also has its own page.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "solutions".
  */
@@ -229,6 +231,8 @@ export interface Solution {
   createdAt: string;
 }
 /**
+ * Images and PDFs used across the website.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -252,6 +256,8 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Technical service areas, listed on /capabilities with a page each.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "capabilities".
  */
@@ -319,6 +325,8 @@ export interface Capability {
   createdAt: string;
 }
 /**
+ * Vendor and distributor logos for the home page and the Partners page.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "partners".
  */
@@ -337,6 +345,8 @@ export interface Partner {
   createdAt: string;
 }
 /**
+ * Plain text pages such as the privacy policy and accessibility statement.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -377,6 +387,8 @@ export interface Page {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * News and press posts, shown under Company → News.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "news".
  */
@@ -422,6 +434,8 @@ export interface News {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Upcoming and past events, shown under Company → Events.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".
  */
@@ -468,6 +482,8 @@ export interface Event {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Open positions, shown under Company → Careers.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobs".
  */
@@ -516,6 +532,8 @@ export interface Job {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Requests sent through the website form. Visible to admins only.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "leads".
  */
@@ -552,6 +570,8 @@ export interface Lead {
   createdAt: string;
 }
 /**
+ * People who can sign in to this admin.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -990,6 +1010,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Text for each section of the home page.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-page".
  */
@@ -1045,6 +1067,8 @@ export interface HomePage {
   createdAt?: string | null;
 }
 /**
+ * Text for the About page.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about-page".
  */
@@ -1085,6 +1109,8 @@ export interface AboutPage {
   createdAt?: string | null;
 }
 /**
+ * Company details used across the website: contact, offices, credentials, agencies.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */

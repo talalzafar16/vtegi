@@ -9,6 +9,7 @@ export const Pages: CollectionConfig = {
   versions: { drafts: true },
   admin: {
     group: 'Website',
+    description: 'Plain text pages such as the privacy policy and accessibility statement.',
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', '_status'],
   },

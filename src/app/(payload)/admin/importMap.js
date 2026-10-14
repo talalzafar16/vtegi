@@ -27,6 +27,13 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { LogoutButton as LogoutButton_7be663afcc270c9353afe7b80c6fe97d } from '../../../components/admin/logout-button'
+import { Icon as Icon_8080e1ef1118adf03a39f8c4df3468b1 } from '../../../components/admin/brand'
+import { Logo as Logo_8080e1ef1118adf03a39f8c4df3468b1 } from '../../../components/admin/brand'
+import { LoginSiteLink as LoginSiteLink_47968aa3e19ca77960af77c26e4e785d } from '../../../components/admin/site-links'
+import { DashboardWelcome as DashboardWelcome_d23f6d4ecf5a7c986033273b1c1aafc1 } from '../../../components/admin/dashboard-welcome'
+import { NavSiteLink as NavSiteLink_47968aa3e19ca77960af77c26e4e785d } from '../../../components/admin/site-links'
+import { AdminFonts as AdminFonts_1dab06ce10d6fd1812a7260c7c8d2b83 } from '../../../components/admin/admin-fonts'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
@@ -61,6 +68,13 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/components/admin/logout-button#LogoutButton": LogoutButton_7be663afcc270c9353afe7b80c6fe97d,
+  "/components/admin/brand#Icon": Icon_8080e1ef1118adf03a39f8c4df3468b1,
+  "/components/admin/brand#Logo": Logo_8080e1ef1118adf03a39f8c4df3468b1,
+  "/components/admin/site-links#LoginSiteLink": LoginSiteLink_47968aa3e19ca77960af77c26e4e785d,
+  "/components/admin/dashboard-welcome#DashboardWelcome": DashboardWelcome_d23f6d4ecf5a7c986033273b1c1aafc1,
+  "/components/admin/site-links#NavSiteLink": NavSiteLink_47968aa3e19ca77960af77c26e4e785d,
+  "/components/admin/admin-fonts#AdminFonts": AdminFonts_1dab06ce10d6fd1812a7260c7c8d2b83,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

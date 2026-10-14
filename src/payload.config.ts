@@ -31,6 +31,19 @@ export default buildConfig({
     user: Users.slug,
     meta: {
       titleSuffix: ' | VTEGI Admin',
+      icons: [{ rel: 'icon', type: 'image/png', url: '/brand/vtegi-mark.png' }],
+    },
+    // VTEGI branding (paths are relative to src/; styles live in app/(payload)/custom.scss).
+    components: {
+      graphics: {
+        Logo: '/components/admin/brand#Logo',
+        Icon: '/components/admin/brand#Icon',
+      },
+      providers: ['/components/admin/admin-fonts#AdminFonts'],
+      beforeDashboard: ['/components/admin/dashboard-welcome#DashboardWelcome'],
+      beforeNavLinks: ['/components/admin/site-links#NavSiteLink'],
+      logout: { Button: '/components/admin/logout-button#LogoutButton' },
+      afterLogin: ['/components/admin/site-links#LoginSiteLink'],
     },
     importMap: {
       baseDir: path.resolve(dirname),

@@ -10,6 +10,7 @@ export const News: CollectionConfig = {
   defaultSort: '-publishedAt',
   admin: {
     group: 'Company',
+    description: 'News and press posts, shown under Company → News.',
     useAsTitle: 'title',
     defaultColumns: ['title', 'publishedAt', '_status'],
   },

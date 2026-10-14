@@ -12,6 +12,7 @@ export const Leads: CollectionConfig = {
   defaultSort: '-createdAt',
   admin: {
     group: 'Sales',
+    description: 'Requests sent through the website form. Visible to admins only.',
     useAsTitle: 'name',
     defaultColumns: ['name', 'organization', 'inquiryType', 'status', 'createdAt'],
   },

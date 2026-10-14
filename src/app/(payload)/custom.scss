@@ -1,0 +1,487 @@
+// VTEGI admin theme. Payload's own styles sit in the `payload-default` cascade layer, so these
+// unlayered rules override them without !important. Colors mirror the website (globals.css);
+// fonts come from components/admin/admin-fonts.tsx.
+
+$ink-950: oklch(15.5% 0.01 25);
+$ink-400: oklch(70.5% 0.012 25);
+$ink-200: oklch(91.6% 0.007 25);
+$grid-line: rgb(255 255 255 / 0.045);
+
+// The website's hairline grid, faded out toward the edges.
+@mixin hairline-grid($mask: radial-gradient(ellipse at center, black, transparent 75%)) {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, $grid-line 1px, transparent 1px),
+    linear-gradient(to bottom, $grid-line 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: $mask;
+}
+
+@mixin eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/////////////////////////////
+// THEME
+/////////////////////////////
+
+:root {
+  // Warm "ink" neutrals on Payload's 21-step scale. Payload flips the scale for dark mode
+  // itself, so both themes pick these up.
+  --color-base-0: oklch(100% 0 0);
+  --color-base-50: oklch(97.6% 0.003 25);
+  --color-base-100: oklch(94.6% 0.005 25);
+  --color-base-150: oklch(90.4% 0.006 25);
+  --color-base-200: oklch(86.4% 0.008 25);
+  --color-base-250: oklch(82.2% 0.009 25);
+  --color-base-300: oklch(77.8% 0.01 25);
+  --color-base-350: oklch(73.4% 0.011 25);
+  --color-base-400: oklch(69% 0.012 25);
+  --color-base-450: oklch(64.4% 0.012 25);
+  --color-base-500: oklch(59.6% 0.013 25);
+  --color-base-550: oklch(54.6% 0.014 25);
+  --color-base-600: oklch(49.6% 0.014 25);
+  --color-base-650: oklch(44.2% 0.014 25);
+  --color-base-700: oklch(38.8% 0.013 25);
+  --color-base-750: oklch(33.2% 0.013 25);
+  --color-base-800: oklch(27.6% 0.012 25);
+  --color-base-850: oklch(21.8% 0.011 25);
+  --color-base-900: oklch(16.6% 0.01 25);
+  --color-base-950: oklch(12.6% 0.009 25);
+  --color-base-1000: oklch(9% 0.008 25);
+
+  --vtegi-red: #cc0505;
+  --vtegi-red-dark: #a00a0a;
+  // Red for lines and text; brighter in dark mode so it keeps its contrast.
+  --vtegi-accent: var(--vtegi-red);
+
+  --style-radius-s: 6px;
+  --style-radius-m: 8px;
+  --style-radius-l: 12px;
+  --accessibility-outline: 2px solid var(--vtegi-accent);
+}
+
+html[data-theme='dark'] {
+  --vtegi-accent: #f83333;
+}
+
+::selection {
+  background: rgb(204 5 5 / 0.2);
+}
+
+html[data-theme='dark'] ::selection {
+  background: rgb(248 51 51 / 0.35);
+  color: inherit;
+}
+
+h1,
+h2 {
+  font-weight: 600;
+  font-stretch: 112.5%;
+  letter-spacing: -0.02em;
+}
+
+// Collection and global descriptions under the page title.
+.custom-view-description {
+  color: var(--theme-elevation-500);
+}
+
+// Primary actions (Save, Publish, Login, Create) in the brand red, like the website's CTAs.
+.btn--style-primary:not(.btn--disabled) {
+  --bg-color: var(--vtegi-red);
+  --hover-bg: var(--vtegi-red-dark);
+  --color: #fff;
+  --hover-color: #fff;
+}
+
+/////////////////////////////
+// NAVIGATION
+/////////////////////////////
+
+.nav {
+  background: var(--theme-elevation-50);
+}
+
+.nav-group__label {
+  @include eyebrow;
+  font-size: 10.5px;
+}
+
+.nav a.nav__link:hover,
+.nav a.nav__link:focus-visible {
+  color: var(--vtegi-accent);
+  text-decoration: none;
+}
+
+.nav__link-indicator {
+  background: var(--vtegi-accent);
+}
+
+.vtegi-site-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin-bottom: 24px;
+  padding: 10px 12px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: var(--style-radius-m);
+  background: var(--theme-elevation-0);
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    border-color 0.3s,
+    color 0.3s;
+
+  &:hover {
+    border-color: var(--vtegi-accent);
+    color: var(--vtegi-accent);
+  }
+}
+
+.vtegi-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin-inline-start: -10px;
+  padding: 8px 10px;
+  border-radius: var(--style-radius-m);
+  color: var(--theme-elevation-600);
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color 0.3s,
+    background-color 0.3s;
+
+  &:hover {
+    background: var(--theme-elevation-100);
+    color: var(--vtegi-accent);
+  }
+}
+
+.vtegi-icon {
+  width: 22px;
+  height: auto;
+}
+
+/////////////////////////////
+// SIGN-IN SCREENS (login, forgot password, first user)
+/////////////////////////////
+
+// Always the website's dark hero backdrop; the form sits on a card in the current theme.
+.template-minimal {
+  position: relative;
+  background-color: $ink-950;
+  background-image: radial-gradient(ellipse at 50% 0%, rgb(61 1 1 / 0.8), transparent 65%);
+
+  &::before {
+    @include hairline-grid;
+  }
+}
+
+.template-minimal__wrap {
+  position: relative;
+  padding: 40px;
+  border: 1px solid var(--theme-elevation-100);
+  border-radius: 16px;
+  background: var(--theme-bg);
+  box-shadow: 0 40px 80px -24px rgb(0 0 0 / 0.6);
+
+  // The website's red "signal line" on the card's top edge.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 40px;
+    width: 40px;
+    height: 2px;
+    background: var(--vtegi-red);
+  }
+}
+
+.vtegi-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  img {
+    width: 48px;
+    height: auto;
+  }
+
+  &__word {
+    display: block;
+    font-size: 30px;
+    font-weight: 800;
+    font-stretch: 125%;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  &__sub {
+    @include eyebrow;
+    display: block;
+    margin-top: 6px;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: var(--theme-elevation-500);
+  }
+}
+
+.vtegi-back-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin: 24px auto 0;
+  color: var(--theme-elevation-500);
+  text-decoration: none;
+  transition: color 0.3s;
+
+  &:hover {
+    color: var(--vtegi-accent);
+  }
+}
+
+/////////////////////////////
+// DASHBOARD
+/////////////////////////////
+
+.collections__label {
+  @include eyebrow;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--vtegi-accent);
+
+  &::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+  }
+}
+
+.card {
+  background: var(--theme-elevation-0);
+  border-radius: var(--style-radius-l);
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s,
+    translate 0.3s;
+
+  // A short red tick on the top edge appears on hover, like the website's cards.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 16px;
+    width: 28px;
+    height: 2px;
+    background: var(--vtegi-accent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  &--has-onclick:hover {
+    translate: 0 -2px;
+    border-color: var(--theme-elevation-250);
+    background: var(--theme-elevation-0);
+    box-shadow: 0 14px 28px -14px rgb(0 0 0 / 0.2);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+html[data-theme='dark'] .card,
+html[data-theme='dark'] .card--has-onclick:hover {
+  background: var(--theme-elevation-50);
+}
+
+// On a dark page the dark welcome panel needs an edge.
+html[data-theme='dark'] .vtegi-welcome {
+  border-color: rgb(255 255 255 / 0.08);
+}
+
+// Welcome panel (components/admin/dashboard-welcome.tsx): the website's dark hero look.
+.vtegi-welcome {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: end;
+  // Inset like the dashboard widgets below (their drag-and-drop zones), so the edges line up.
+  margin: 0 6px 48px;
+  padding: 40px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  color: #fff;
+  background-color: $ink-950;
+  background-image: radial-gradient(ellipse at 85% 15%, rgb(61 1 1 / 0.85), transparent 60%);
+
+  &::before {
+    @include hairline-grid(radial-gradient(ellipse at 70% 40%, black, transparent 75%));
+  }
+
+  // Red signal line along the bottom edge.
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgb(228 20 20 / 0.7), transparent);
+  }
+
+  > * {
+    position: relative;
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+
+  &__eyebrow {
+    @include eyebrow;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #f83333;
+
+    &::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: currentColor;
+    }
+  }
+
+  &__title {
+    margin: 16px 0 0;
+    color: #fff;
+    font-size: 34px;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  &__text {
+    max-width: 46ch;
+    margin-top: 12px;
+    color: $ink-400;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  &__site {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 24px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #f83333;
+    }
+  }
+
+  &__panel {
+    display: grid;
+    gap: 12px;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  &__shortcuts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 14px;
+      border: 1px solid rgb(255 255 255 / 0.1);
+      border-radius: var(--style-radius-m);
+      background: rgb(255 255 255 / 0.03);
+      color: $ink-200;
+      font-weight: 500;
+      text-decoration: none;
+      transition:
+        border-color 0.3s,
+        background-color 0.3s,
+        color 0.3s;
+
+      &:hover {
+        border-color: rgb(255 255 255 / 0.3);
+        background: rgb(255 255 255 / 0.06);
+        color: #fff;
+      }
+    }
+  }
+}
+
+.vtegi-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.03);
+  color: #fff;
+  text-decoration: none;
+  transition: border-color 0.3s;
+
+  &:hover {
+    border-color: rgb(255 255 255 / 0.3);
+  }
+
+  &__value {
+    font-size: 32px;
+    font-weight: 600;
+    font-stretch: 112.5%;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__label {
+    @include eyebrow;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    color: $ink-400;
+  }
+
+  // New requests waiting: the card turns red so it can't be missed.
+  &[data-highlight] {
+    border-color: rgb(248 51 51 / 0.5);
+    background: rgb(204 5 5 / 0.15);
+
+    .vtegi-stat__value {
+      color: #ff6464;
+    }
+  }
+}

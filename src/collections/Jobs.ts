@@ -29,6 +29,7 @@ export const Jobs: CollectionConfig = {
   versions: { drafts: true },
   admin: {
     group: 'Company',
+    description: 'Open positions, shown under Company → Careers.',
     useAsTitle: 'title',
     defaultColumns: ['title', 'location', 'employmentType', '_status'],
   },

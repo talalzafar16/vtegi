@@ -16,6 +16,7 @@ export const Partners: CollectionConfig = {
   orderable: true,
   admin: {
     group: 'Website',
+    description: 'Vendor and distributor logos for the home page and the Partners page.',
     useAsTitle: 'name',
     defaultColumns: ['name', 'category', 'featured'],
   },

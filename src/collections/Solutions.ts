@@ -10,6 +10,7 @@ export const Solutions: CollectionConfig = {
   orderable: true,
   admin: {
     group: 'Website',
+    description: 'The solution cards on the home page. Each one also has its own page.',
     useAsTitle: 'title',
     defaultColumns: ['title', 'shortDescription'],
   },

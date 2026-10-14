@@ -10,6 +10,7 @@ export const Capabilities: CollectionConfig = {
   orderable: true,
   admin: {
     group: 'Website',
+    description: 'Technical service areas, listed on /capabilities with a page each.',
     useAsTitle: 'title',
     defaultColumns: ['title', 'summary'],
   },

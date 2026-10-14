@@ -4,7 +4,7 @@ import { anyone, authenticated } from '@/access'
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  admin: { group: 'Website' },
+  admin: { group: 'Website', description: 'Images and PDFs used across the website.' },
   access: { read: anyone, create: authenticated, update: authenticated, delete: authenticated },
   upload: { mimeTypes: ['image/*', 'application/pdf'] },
   fields: [

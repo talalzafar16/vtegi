@@ -8,6 +8,8 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   agentRules: false,
+  // Dev-only badge: bottom-left would cover the admin menu's Log out button.
+  devIndicators: { position: 'bottom-right' },
   images: {
     localPatterns: [{ pathname: '/api/media/file/**' }, { pathname: '/brand/**' }],
   },

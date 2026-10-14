@@ -13,7 +13,7 @@ const labelList = (name: string, description: string) => ({
 /** Editable copy for /company/about. */
 export const AboutPage: GlobalConfig = {
   slug: 'about-page',
-  admin: { group: 'Website' },
+  admin: { group: 'Website', description: 'Text for the About page.' },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobal] },
   fields: [

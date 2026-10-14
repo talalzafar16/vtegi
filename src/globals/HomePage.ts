@@ -10,7 +10,7 @@ import { revalidateGlobal } from '@/hooks/revalidate'
  */
 export const HomePage: GlobalConfig = {
   slug: 'home-page',
-  admin: { group: 'Website' },
+  admin: { group: 'Website', description: 'Text for each section of the home page.' },
   access: { read: anyone, update: authenticated },
   hooks: { afterChange: [revalidateGlobal] },
   fields: [
