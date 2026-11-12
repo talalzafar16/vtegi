@@ -2,18 +2,19 @@ import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import type { ServerProps } from 'payload'
 
 /**
- * Top of the admin dashboard: a branded welcome, request counts from the website form
- * (admins only, like the Leads collection) and shortcuts to the most common tasks.
+ * Top of the admin dashboard: a branded welcome, counts of website requests and store quotes
+ * needing a manual price (admins only, like those collections) and shortcuts to common tasks.
  */
 export async function DashboardWelcome({ payload, user }: ServerProps) {
   const admin = payload.config.routes.admin
   const isAdmin = user?.role === 'admin'
   const firstName = user?.name?.split(' ')[0]
 
-  const [newRequests, allRequests] = isAdmin
+  const [newRequests, allRequests, manualQuotes] = isAdmin
     ? await Promise.all([
         payload.count({ collection: 'leads', where: { status: { equals: 'new' } } }),
         payload.count({ collection: 'leads' }),
+        payload.count({ collection: 'quote-requests', where: { status: { equals: 'manual' } } }),
       ])
     : []
 
@@ -41,7 +42,7 @@ export async function DashboardWelcome({ payload, user }: ServerProps) {
       </div>
 
       <div className="vtegi-welcome__panel">
-        {newRequests && allRequests && (
+        {newRequests && allRequests && manualQuotes && (
           <div className="vtegi-welcome__stats">
             <a
               href={`${admin}/collections/leads?where[status][equals]=new`}
@@ -54,6 +55,14 @@ export async function DashboardWelcome({ payload, user }: ServerProps) {
             <a href={`${admin}/collections/leads`} className="vtegi-stat">
               <span className="vtegi-stat__value">{allRequests.totalDocs}</span>
               <span className="vtegi-stat__label">All requests</span>
+            </a>
+            <a
+              href={`${admin}/collections/quote-requests?where[status][equals]=manual`}
+              className="vtegi-stat"
+              data-highlight={manualQuotes.totalDocs > 0 || undefined}
+            >
+              <span className="vtegi-stat__value">{manualQuotes.totalDocs}</span>
+              <span className="vtegi-stat__label">Manual quotes</span>
             </a>
           </div>
         )}

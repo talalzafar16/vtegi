@@ -10,6 +10,8 @@ export const siteSettings = {
   ],
   cage: '6V7J3',
   uei: 'UTM3TNLXPRA7',
+  duns: '078592723',
+  taxId: '46-2078879',
   naics: [
     { code: '541512', title: 'Computer Systems Design Services', primary: true },
     { code: '541513', title: 'Computer Facilities Management Services' },

@@ -72,6 +72,23 @@ export const SiteSettings: GlobalConfig = {
               ],
             },
             {
+              type: 'row',
+              fields: [
+                {
+                  name: 'duns',
+                  label: 'DUNS number',
+                  type: 'text',
+                  admin: { description: 'Printed on store quotes.' },
+                },
+                {
+                  name: 'taxId',
+                  label: 'Tax ID (EIN)',
+                  type: 'text',
+                  admin: { description: 'Printed on store quotes.' },
+                },
+              ],
+            },
+            {
               name: 'naics',
               label: 'NAICS codes',
               type: 'array',

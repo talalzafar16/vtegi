@@ -9,6 +9,7 @@ import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
 import { Capabilities } from './collections/Capabilities'
+import { DistributorLists } from './collections/DistributorLists'
 import { Events } from './collections/Events'
 import { Jobs } from './collections/Jobs'
 import { Leads } from './collections/Leads'
@@ -16,11 +17,15 @@ import { Media } from './collections/Media'
 import { News } from './collections/News'
 import { Pages } from './collections/Pages'
 import { Partners } from './collections/Partners'
+import { QuoteRequests } from './collections/QuoteRequests'
 import { Solutions } from './collections/Solutions'
+import { StoreCategories } from './collections/StoreCategories'
+import { StoreSyncs } from './collections/StoreSyncs'
 import { Users } from './collections/Users'
 import { AboutPage } from './globals/AboutPage'
 import { HomePage } from './globals/HomePage'
 import { SiteSettings } from './globals/SiteSettings'
+import { StoreSettings } from './globals/StoreSettings'
 import { s3Bucket, s3ClientConfig } from './lib/s3'
 
 const filename = fileURLToPath(import.meta.url)
@@ -64,10 +69,14 @@ export default buildConfig({
     Events,
     Jobs,
     Leads,
+    StoreCategories,
+    QuoteRequests,
+    DistributorLists,
+    StoreSyncs,
     Media,
     Users,
   ].map(hideApiTab),
-  globals: [HomePage, AboutPage, SiteSettings].map(hideApiTab),
+  globals: [HomePage, AboutPage, SiteSettings, StoreSettings].map(hideApiTab),
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

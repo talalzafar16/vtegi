@@ -19,6 +19,7 @@ export const companyLinks: NavLink[] = [
 ]
 
 export const primaryLinks: NavLink[] = [
+  { label: 'Store', href: '/store' },
   { label: 'Contracting', href: '/contracting' },
   { label: 'Contact', href: '/contact' },
 ]

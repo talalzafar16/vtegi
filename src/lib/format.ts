@@ -1,5 +1,7 @@
 const timeZone = 'America/New_York' // VTEGI's home time zone
 
+const priceFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+
 const dateFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'long', timeZone })
 
 // dateStyle/timeStyle can't be combined with timeZoneName, so spell the fields out.
@@ -18,3 +20,6 @@ export const formatDate = (iso: string) => dateFormat.format(new Date(iso))
 
 /** "October 9, 2026 at 2:00 PM EDT". */
 export const formatDateTime = (iso: string) => dateTimeFormat.format(new Date(iso))
+
+/** "$1,234.50". */
+export const formatPrice = (amount: number) => priceFormat.format(amount)

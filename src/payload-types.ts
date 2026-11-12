@@ -75,6 +75,10 @@ export interface Config {
     events: Event;
     jobs: Job;
     leads: Lead;
+    'store-categories': StoreCategory;
+    'quote-requests': QuoteRequest;
+    'distributor-lists': DistributorList;
+    'store-syncs': StoreSync;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -92,6 +96,10 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
+    'store-categories': StoreCategoriesSelect<false> | StoreCategoriesSelect<true>;
+    'quote-requests': QuoteRequestsSelect<false> | QuoteRequestsSelect<true>;
+    'distributor-lists': DistributorListsSelect<false> | DistributorListsSelect<true>;
+    'store-syncs': StoreSyncsSelect<false> | StoreSyncsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -107,11 +115,13 @@ export interface Config {
     'home-page': HomePage;
     'about-page': AboutPage;
     'site-settings': SiteSetting;
+    'store-settings': StoreSetting;
   };
   globalsSelect: {
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'store-settings': StoreSettingsSelect<false> | StoreSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -172,7 +182,14 @@ export interface Solution {
     | 'shield'
     | 'phone'
     | 'map'
-    | 'wrench';
+    | 'wrench'
+    | 'laptop'
+    | 'cable'
+    | 'cloud'
+    | 'life-buoy'
+    | 'megaphone'
+    | 'settings'
+    | 'briefcase';
   /**
    * One or two sentences, shown on the home page card.
    */
@@ -283,7 +300,14 @@ export interface Capability {
     | 'shield'
     | 'phone'
     | 'map'
-    | 'wrench';
+    | 'wrench'
+    | 'laptop'
+    | 'cable'
+    | 'cloud'
+    | 'life-buoy'
+    | 'megaphone'
+    | 'settings'
+    | 'briefcase';
   /**
    * Shown on cards.
    */
@@ -570,6 +594,165 @@ export interface Lead {
   createdAt: string;
 }
 /**
+ * Categories in the online store. Drag to reorder, switch off to hide, and choose which distributor products each one shows.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-categories".
+ */
+export interface StoreCategory {
+  id: number;
+  _order?: string | null;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * One or two sentences shown on the store home page and the category page.
+   */
+  description?: string | null;
+  icon:
+    | 'landmark'
+    | 'building'
+    | 'graduation-cap'
+    | 'heart-pulse'
+    | 'headset'
+    | 'cart'
+    | 'server'
+    | 'database'
+    | 'network'
+    | 'shield'
+    | 'phone'
+    | 'map'
+    | 'wrench'
+    | 'laptop'
+    | 'cable'
+    | 'cloud'
+    | 'life-buoy'
+    | 'megaphone'
+    | 'settings'
+    | 'briefcase';
+  visible?: boolean | null;
+  /**
+   * Each group is a filter on the Hardware tab, e.g. "Laptops" = Computer Systems + keyword "laptop". Ingram also lists many discontinued products, so always add a keyword or a brand.
+   */
+  ingramGroups?:
+    | {
+        label: string;
+        category: number | DistributorList;
+        keyword?: string | null;
+        brand?: (number | null) | DistributorList;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Pax8 has no categories, so products are chosen by brand. "Include words" narrows a brand down (a product matches if its name has any of them); "Exclude words" removes products.
+   */
+  pax8Rules?:
+    | {
+        brand: number | DistributorList;
+        includeWords?: string[] | null;
+        excludeWords?: string[] | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Category and brand names found at each distributor, used by the Store Categories dropdowns. Products and prices are always live; only these names need a sync now and then.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "distributor-lists".
+ */
+export interface DistributorList {
+  id: number;
+  name: string;
+  distributor: 'ingram' | 'pax8';
+  kind: 'category' | 'brand';
+  /**
+   * Current products found while syncing (a sample for Ingram).
+   */
+  productCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Quote requests from the online store and the price each customer was sent.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quote-requests".
+ */
+export interface QuoteRequest {
+  id: number;
+  product: {
+    name: string;
+    vendor: 'ingram' | 'pax8';
+    vendorProductId: string;
+    partNumber?: string | null;
+    brand?: string | null;
+  };
+  quantity: number;
+  billingTerm?: ('monthly' | 'annual' | 'one-time') | null;
+  termMonths?: number | null;
+  termLabel?: string | null;
+  /**
+   * Empty when no price was available. The request then needs a manual quote.
+   */
+  price?: {
+    cost?: number | null;
+    markupPercent?: number | null;
+    listPrice?: number | null;
+    discountPercent?: number | null;
+    unitPrice?: number | null;
+    total?: number | null;
+  };
+  name: string;
+  email: string;
+  phone?: string | null;
+  organization: string;
+  organizationType?: ('government' | 'commercial' | 'education' | 'healthcare' | 'other' | 'individual') | null;
+  zip?: string | null;
+  address?: string | null;
+  notes?: string | null;
+  quoteNumber?: string | null;
+  status: 'sent' | 'manual' | 'quoted';
+  manualReason?: ('no-price' | 'volume' | 'unavailable' | 'email-failed') | null;
+  /**
+   * When the customer was sent their quote, or the "preparing your quote" note.
+   */
+  customerEmailedAt?: string | null;
+  emailError?: string | null;
+  /**
+   * Internal only.
+   */
+  internalNotes?: string | null;
+  sourceUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Each refresh of the distributor category and brand names behind the Store Categories dropdowns. Run "Sync now" when a distributor adds or renames brands.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-syncs".
+ */
+export interface StoreSync {
+  id: number;
+  status: 'running' | 'success' | 'failed';
+  /**
+   * Empty when run from the command line (yarn store:sync).
+   */
+  startedBy?: (number | null) | User;
+  finishedAt?: string | null;
+  summary?: string | null;
+  progress?: string | null;
+  error?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * People who can sign in to this admin.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -657,6 +840,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'leads';
         value: number | Lead;
+      } | null)
+    | ({
+        relationTo: 'store-categories';
+        value: number | StoreCategory;
+      } | null)
+    | ({
+        relationTo: 'quote-requests';
+        value: number | QuoteRequest;
+      } | null)
+    | ({
+        relationTo: 'distributor-lists';
+        value: number | DistributorList;
+      } | null)
+    | ({
+        relationTo: 'store-syncs';
+        value: number | StoreSync;
       } | null)
     | ({
         relationTo: 'media';
@@ -927,6 +1126,110 @@ export interface LeadsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-categories_select".
+ */
+export interface StoreCategoriesSelect<T extends boolean = true> {
+  _order?: T;
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  description?: T;
+  icon?: T;
+  visible?: T;
+  ingramGroups?:
+    | T
+    | {
+        label?: T;
+        category?: T;
+        keyword?: T;
+        brand?: T;
+        id?: T;
+      };
+  pax8Rules?:
+    | T
+    | {
+        brand?: T;
+        includeWords?: T;
+        excludeWords?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quote-requests_select".
+ */
+export interface QuoteRequestsSelect<T extends boolean = true> {
+  product?:
+    | T
+    | {
+        name?: T;
+        vendor?: T;
+        vendorProductId?: T;
+        partNumber?: T;
+        brand?: T;
+      };
+  quantity?: T;
+  billingTerm?: T;
+  termMonths?: T;
+  termLabel?: T;
+  price?:
+    | T
+    | {
+        cost?: T;
+        markupPercent?: T;
+        listPrice?: T;
+        discountPercent?: T;
+        unitPrice?: T;
+        total?: T;
+      };
+  name?: T;
+  email?: T;
+  phone?: T;
+  organization?: T;
+  organizationType?: T;
+  zip?: T;
+  address?: T;
+  notes?: T;
+  quoteNumber?: T;
+  status?: T;
+  manualReason?: T;
+  customerEmailedAt?: T;
+  emailError?: T;
+  internalNotes?: T;
+  sourceUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "distributor-lists_select".
+ */
+export interface DistributorListsSelect<T extends boolean = true> {
+  name?: T;
+  distributor?: T;
+  kind?: T;
+  productCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-syncs_select".
+ */
+export interface StoreSyncsSelect<T extends boolean = true> {
+  status?: T;
+  startedBy?: T;
+  finishedAt?: T;
+  summary?: T;
+  progress?: T;
+  error?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -1137,6 +1440,14 @@ export interface SiteSetting {
     | null;
   cage?: string | null;
   uei?: string | null;
+  /**
+   * Printed on store quotes.
+   */
+  duns?: string | null;
+  /**
+   * Printed on store quotes.
+   */
+  taxId?: string | null;
   naics?:
     | {
         code: string;
@@ -1183,6 +1494,55 @@ export interface SiteSetting {
         id?: string | null;
       }[]
     | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Pricing rules for the online store. Changes apply to prices and quotes right away.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-settings".
+ */
+export interface StoreSetting {
+  id: number;
+  /**
+   * When off, products show only "Request a Quote". Quotes still include prices.
+   */
+  showPrices?: boolean | null;
+  /**
+   * Added to the distributor cost of every product. Example: 20 means cost + 20%. Prices stay hidden until this is set.
+   */
+  markupPercent: number;
+  /**
+   * Taken off the price after markup, based on the quantity requested. The highest level reached applies.
+   */
+  quantityDiscounts?:
+    | {
+        minQuantity: number;
+        discountPercent: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * From this quantity, no automatic price is shown or quoted: the request comes to you to price manually. Leave empty to always price automatically.
+   */
+  customPricingFrom?: number | null;
+  /**
+   * Receives "needs manual quote" alerts and a copy of every quote. Defaults to the website request recipient in Site Settings.
+   */
+  notificationEmail?: string | null;
+  /**
+   * Printed on every quote.
+   */
+  salesperson?: string | null;
+  /**
+   * Website quotes are numbered QUO-26001, QUO-26002… from this number. If your last manual quote was QUO-26014, enter 15. Set it back to 1 each January.
+   */
+  firstQuoteNumber?: number | null;
+  /**
+   * Products from these brands never appear in the store.
+   */
+  hiddenBrands?: (number | DistributorList)[] | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1307,6 +1667,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
       };
   cage?: T;
   uei?: T;
+  duns?: T;
+  taxId?: T;
   naics?:
     | T
     | {
@@ -1344,6 +1706,29 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         logo?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "store-settings_select".
+ */
+export interface StoreSettingsSelect<T extends boolean = true> {
+  showPrices?: T;
+  markupPercent?: T;
+  quantityDiscounts?:
+    | T
+    | {
+        minQuantity?: T;
+        discountPercent?: T;
+        id?: T;
+      };
+  customPricingFrom?: T;
+  notificationEmail?: T;
+  salesperson?: T;
+  firstQuoteNumber?: T;
+  hiddenBrands?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

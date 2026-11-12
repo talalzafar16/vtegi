@@ -406,7 +406,7 @@ html[data-theme='dark'] .vtegi-welcome {
 
   &__stats {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
 
@@ -482,6 +482,68 @@ html[data-theme='dark'] .vtegi-welcome {
 
     .vtegi-stat__value {
       color: #ff6464;
+    }
+  }
+}
+
+// "Sync now" panel above Distributor Lists and Sync History.
+.vtegi-sync {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  // Lines up with the list below (Payload's page gutter).
+  margin: 24px var(--gutter-h) 20px;
+  padding: 16px 20px;
+  border: 1px solid var(--theme-elevation-150);
+  border-left: 3px solid var(--theme-elevation-300);
+  border-radius: var(--style-radius-m);
+  background: var(--theme-elevation-0);
+
+  &--running {
+    border-left-color: #d97706;
+  }
+
+  &--success {
+    border-left-color: #16a34a;
+  }
+
+  &--failed {
+    border-left-color: var(--vtegi-accent);
+  }
+
+  &__text {
+    flex: 1 1 360px;
+    min-width: 0;
+  }
+
+  &__title {
+    @include eyebrow;
+    margin: 0 0 4px;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    color: var(--vtegi-accent);
+  }
+
+  &__status,
+  &__error {
+    margin: 0;
+  }
+
+  &__error {
+    margin-top: 4px;
+    color: var(--vtegi-accent);
+  }
+
+  &__link {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--theme-elevation-600);
+
+    &:hover {
+      color: var(--vtegi-accent);
     }
   }
 }

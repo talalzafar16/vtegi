@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   agentRules: false,
   // Dev-only badge: bottom-left would cover the admin menu's Log out button.
   devIndicators: { position: 'bottom-right' },
+  // Renders quote PDFs with Node APIs; bundling it breaks its font and image loading.
+  serverExternalPackages: ['@react-pdf/renderer'],
   images: {
     localPatterns: [{ pathname: '/api/media/file/**' }, { pathname: '/brand/**' }],
   },
