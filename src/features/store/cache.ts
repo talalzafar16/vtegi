@@ -1,8 +1,7 @@
 import Redis from 'ioredis'
 
-// Cache for distributor data (tokens, product info, prices). Redis when REDIS_URL is set (a container
-// on the VPS, or Upstash), otherwise memory. If Redis is down, data is simply loaded fresh.
-// Refresh times live in `refreshAt` below.
+// Cache for distributor data: Redis when REDIS_URL is set (VPS container or Upstash), otherwise
+// memory. If Redis is down, data is loaded fresh. Refresh times are in `refreshAt`.
 
 type Entry = { json: string; expires: number }
 const shared = globalThis as { __storeRedis?: Redis; __storeMemory?: Map<string, Entry> }
@@ -96,9 +95,7 @@ function nextTwiceDaily(now = Date.now()) {
 
 /** When cached data is refreshed. Change the store's refresh times here. */
 export const refreshAt = {
-  /** Product lists, details and the Pax8 catalog: twice a day, 6 AM and 6 PM Eastern. */
   productInfo: () => nextTwiceDaily(),
-  /** Distributor prices: every 2 hours. */
   prices: () => Date.now() + 2 * HOUR * 1000,
   /** Nothing found, or a lookup failed: try again soon. */
   retry: () => Date.now() + 10 * 60 * 1000,
@@ -109,10 +106,8 @@ const SHOW_OLD = { productInfo: 2 * 24 * HOUR, prices: 2 * HOUR }
 
 const keepSeconds = (at: number, showOld: number) => (at - Date.now()) / 1000 + showOld
 
-/**
- * The cached value. Once `when(value)` has passed, the old value is still returned straight away
- * while a fresh one loads in the background, so visitors don't wait (only an empty cache does).
- */
+/** The cached value. Once `when(value)` has passed, the old value is still returned while a
+ * fresh one loads in the background, so visitors don't wait. */
 export async function cachedStale<T>(
   key: string,
   when: (value: T) => number,

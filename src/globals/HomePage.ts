@@ -3,11 +3,7 @@ import type { GlobalConfig } from 'payload'
 import { anyone, authenticated } from '@/access'
 import { revalidateGlobal } from '@/hooks/revalidate'
 
-/**
- * Editable copy for the home page. Section order is fixed in code on purpose:
- * the page is a guided flow (choose → request → hear back).
- * Solutions, capabilities and partners come from their own collections.
- */
+/** Home page copy. Section order is fixed in code: the page is a guided flow. */
 export const HomePage: GlobalConfig = {
   slug: 'home-page',
   admin: { group: 'Website', description: 'Text for each section of the home page.' },

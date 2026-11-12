@@ -29,7 +29,6 @@ type QuoteFormProps = {
   customFrom: number | null
 }
 
-/** "per user / month", "per unit", "per device". */
 function priceUnit(offer: Offer) {
   const unit = offer.unit === 'each' ? 'unit' : offer.unit
   const period =
@@ -40,7 +39,6 @@ function priceUnit(offer: Offer) {
 const range = (from: number, to: number | null) =>
   to === null ? `${from}+` : from === to ? String(from) : `${from}–${to}`
 
-/** Price table, term choice and the quote form on a product page. */
 export function QuoteForm({ vendor, productId, offers, customFrom }: QuoteFormProps) {
   const [offerKey, setOfferKey] = useState(offers[0]?.key ?? 'unit')
   const offer = offers.find((o) => o.key === offerKey)

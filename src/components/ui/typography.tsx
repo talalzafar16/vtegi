@@ -34,7 +34,6 @@ export function Eyebrow({ className, children, ...props }: ComponentProps<'p'>) 
   )
 }
 
-/** Larger intro paragraph under a heading. */
 export function Lead({ className, ...props }: ComponentProps<'p'>) {
   return (
     <p

@@ -16,7 +16,6 @@ export async function generateMetadata({ params }: Props) {
   return page ? docMetadata(page, page.intro) : {}
 }
 
-/** Simple CMS text pages (Privacy Policy, Accessibility, ...). */
 export default async function CmsPage({ params }: Props) {
   const page = await getBySlug('pages', (await params).slug)
   if (!page) notFound()

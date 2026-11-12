@@ -1,9 +1,4 @@
-/**
- * Seeds the CMS with real VTEGI content. Safe to re-run: it only creates what is
- * missing and never overwrites edits made in the admin panel.
- *
- * Run: yarn seed
- */
+// Seeds real VTEGI content. Safe to re-run: creates what's missing, never overwrites admin edits.
 import config from '@payload-config'
 import { convertMarkdownToLexical, editorConfigFactory } from '@payloadcms/richtext-lexical'
 import path from 'path'

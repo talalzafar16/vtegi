@@ -19,11 +19,8 @@ export type QuoteResult =
 const MIN_FILL_MS = 3000 // people take longer than this; many bots don't
 const MAX_PER_HOUR = 5
 
-/**
- * Handles "Request a Quote": prices the product fresh from the distributor, saves the Quote Request
- * and emails the quote (or tells VTEGI it needs a manual one). Server actions are public endpoints,
- * so everything is re-validated here.
- */
+/** Request a Quote: live price, save, email. Server actions are public endpoints, so everything
+ * is re-validated here. */
 export async function submitQuote(
   input: QuoteInput,
   meta: { startedAt: number; turnstileToken?: string },

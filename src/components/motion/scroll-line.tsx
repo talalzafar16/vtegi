@@ -5,10 +5,8 @@ import { useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
-/**
- * Vertical line that fills in red as its container scrolls through the viewport. Reduced motion
- * shows it full, via CSS, so server and client render the same markup.
- */
+/** Vertical line that fills in red as its container scrolls through view. Reduced motion shows it
+ * full via CSS, so server and client markup match. */
 export function ScrollLine({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 50%'] })

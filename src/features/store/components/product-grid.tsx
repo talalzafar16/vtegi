@@ -19,7 +19,6 @@ type ProductGridProps = {
 
 const gridStyles = 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
 
-/** A page of live products. Streams in after the page shell (see the skeleton below). */
 export async function ProductGrid({ listing: pending, page, pageHref }: ProductGridProps) {
   const listing = await pending
 
@@ -103,7 +102,6 @@ function PageLink({
   )
 }
 
-/** Placeholder cards while a distributor responds (first visit can take a few seconds). */
 export function ProductGridSkeleton() {
   return (
     <div role="status" aria-label="Loading products">

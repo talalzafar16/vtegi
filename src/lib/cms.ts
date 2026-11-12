@@ -2,17 +2,14 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
-// Server-only CMS queries for the website.
-// - `cache()` dedupes calls within one render (header, footer and page share data).
-// - `overrideAccess: false` runs queries as an anonymous visitor, so collection access
-//   rules apply: drafts stay hidden and admin-only data (leads) can never leak.
+// Server-only CMS queries. `cache()` dedupes calls within a render; `overrideAccess: false`
+// applies public access rules, so drafts and admin-only data never leak.
 
 type PageCollection =
   'solutions' | 'capabilities' | 'partners' | 'news' | 'events' | 'jobs' | 'pages'
 
 const payload = () => getPayload({ config })
 
-/** All visible documents of a collection. */
 export const listDocs = cache(async <T extends PageCollection>(collection: T, sort: string) => {
   const cms = await payload()
   const { docs } = await cms.find({
@@ -24,7 +21,6 @@ export const listDocs = cache(async <T extends PageCollection>(collection: T, so
   return docs
 })
 
-/** One visible document by slug, or null. */
 export const getBySlug = cache(
   async <T extends Exclude<PageCollection, 'partners'>>(collection: T, slug: string) => {
     const cms = await payload()

@@ -13,11 +13,9 @@ const tones = {
 
 type SectionProps = ComponentProps<'section'> & {
   tone?: keyof typeof tones
-  /** Extra classes for the inner container. */
   containerClassName?: string
 }
 
-/** Page section with vertical rhythm, a background tone and a centered container. */
 export function Section({
   tone = 'light',
   className,

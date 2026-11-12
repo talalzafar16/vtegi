@@ -67,7 +67,6 @@ export function Field({ id, label, required, hint, error, className, children }:
   )
 }
 
-/** ARIA wiring for a control inside <Field>. */
 export function describedBy(id: string, error?: string, hasHint = false) {
   return {
     id,

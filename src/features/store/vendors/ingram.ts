@@ -97,10 +97,8 @@ type CatalogItem = {
 // Ingram sends these flags as "True"/"False" strings.
 const isTrue = (value: unknown) => String(value).toLowerCase() === 'true'
 
-/**
- * Skips products that can't be bought: discontinued (Ingram's catalog keeps years of old parts, and
- * its search can't exclude them) or not authorized for VTEGI.
- */
+/** Skips products that can't be bought: discontinued (Ingram keeps years of old parts and its
+ * search can't exclude them) or not authorized for VTEGI. */
 function toProduct(item: CatalogItem): ProductSummary | null {
   if (isTrue(item.discontinued)) return null
   if (item.authorizedToPurchase !== undefined && !isTrue(item.authorizedToPurchase)) return null
@@ -123,11 +121,8 @@ type CatalogQuery = {
   pageSize?: number
 }
 
-/**
- * One page of Ingram's catalog, current products only. Category-only searches are mostly
- * discontinued parts, so the store always adds a keyword or brand. Asks for 50 so that about 25
- * remain after filtering.
- */
+/** One catalog page, current products only. Category-only searches are mostly discontinued
+ * parts, so the store adds a keyword or brand; asks for 50 so about 25 remain. */
 export function catalogPage({ category, brand, keyword, page = 1, pageSize = 50 }: CatalogQuery) {
   const params = new URLSearchParams({ pageNumber: String(page), pageSize: String(pageSize) })
   if (category) params.set('category', category)
@@ -168,10 +163,8 @@ function dimensions(info: DetailsResponse['additionalInformation']) {
   return sizes.every(Boolean) ? `${sizes.join(' × ')} in` : null
 }
 
-/**
- * One product for its page: Ingram's details plus the readable name, which only its catalog search
- * returns. Null when Ingram doesn't have it or it can't be bought.
- */
+/** One product for its page: details plus the readable name (only the catalog search has it).
+ * Null when Ingram doesn't have it or it can't be bought. */
 export function product(partNumber: string) {
   return cachedStale<ProductDetail | null>(
     key(`product:${partNumber}`),

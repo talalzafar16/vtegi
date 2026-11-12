@@ -16,7 +16,6 @@ type RequestSectionProps = HomePage['process'] &
     headingAs?: 'h1' | 'h2'
   }
 
-/** Steps 2–3 of the request flow: the process next to the form. Used on several pages. */
 export function RequestSection({
   heading,
   intro,

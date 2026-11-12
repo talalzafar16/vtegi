@@ -1,6 +1,5 @@
-// VTEGI admin theme. Payload's own styles sit in the `payload-default` cascade layer, so these
-// unlayered rules override them without !important. Colors mirror the website (globals.css);
-// fonts come from components/admin/admin-fonts.tsx.
+// VTEGI admin theme. Payload's styles are in the `payload-default` layer, so these unlayered
+// rules override them without !important. Colors mirror the website (globals.css).
 
 $ink-950: oklch(15.5% 0.01 25);
 $ink-400: oklch(70.5% 0.012 25);
@@ -28,9 +27,7 @@ $grid-line: rgb(255 255 255 / 0.045);
   text-transform: uppercase;
 }
 
-/////////////////////////////
-// THEME
-/////////////////////////////
+// Theme
 
 :root {
   // Warm "ink" neutrals on Payload's 21-step scale. Payload flips the scale for dark mode
@@ -101,9 +98,7 @@ h2 {
   --hover-color: #fff;
 }
 
-/////////////////////////////
-// NAVIGATION
-/////////////////////////////
+// Navigation
 
 .nav {
   background: var(--theme-elevation-50);
@@ -172,9 +167,7 @@ h2 {
   height: auto;
 }
 
-/////////////////////////////
-// SIGN-IN SCREENS (login, forgot password, first user)
-/////////////////////////////
+// Sign-in screens (login, forgot password, first user)
 
 // Always the website's dark hero backdrop; the form sits on a card in the current theme.
 .template-minimal {
@@ -251,9 +244,7 @@ h2 {
   }
 }
 
-/////////////////////////////
-// DASHBOARD
-/////////////////////////////
+// Dashboard
 
 .collections__label {
   @include eyebrow;

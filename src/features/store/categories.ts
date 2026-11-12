@@ -5,7 +5,6 @@ import { cache } from 'react'
 import type { DistributorList, StoreCategory } from '@/payload-types'
 
 export type IngramGroup = {
-  /** URL value for the filter chip, e.g. "laptops". */
   key: string
   label: string
   category: string

@@ -7,7 +7,6 @@ const twMerge = extendTailwindMerge({
   extend: { theme: { text: ['display', 'title'], container: ['site'] } },
 })
 
-/** Merge class names, letting later Tailwind classes override earlier ones. */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

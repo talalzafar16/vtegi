@@ -1,10 +1,7 @@
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import type { ServerProps } from 'payload'
 
-/**
- * Top of the admin dashboard: a branded welcome, counts of website requests and store quotes
- * needing a manual price (admins only, like those collections) and shortcuts to common tasks.
- */
+/** Dashboard top: welcome, counts of requests and manual quotes (admins only), shortcuts. */
 export async function DashboardWelcome({ payload, user }: ServerProps) {
   const admin = payload.config.routes.admin
   const isAdmin = user?.role === 'admin'

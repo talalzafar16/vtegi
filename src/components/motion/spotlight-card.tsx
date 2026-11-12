@@ -5,7 +5,6 @@ import type { ComponentProps, PointerEvent } from 'react'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-/** Card with a soft red glow that follows the cursor. */
 export function SpotlightCard({ className, children, ...props }: ComponentProps<'div'>) {
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()

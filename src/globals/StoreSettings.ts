@@ -3,10 +3,7 @@ import type { GlobalConfig } from 'payload'
 import { isAdmin } from '@/access'
 import { revalidateGlobal } from '@/hooks/revalidate'
 
-/**
- * Pricing rules for the online store, set by VTEGI in the admin. Admin-only because the markup
- * is private: the website and quotes read it on the server (features/store/settings.ts).
- */
+/** Admin-only, since the markup is private; the site reads it on the server (store/settings.ts). */
 export const StoreSettings: GlobalConfig = {
   slug: 'store-settings',
   admin: {

@@ -7,15 +7,11 @@ import { flushSync } from 'react-dom'
 
 import { cn } from '@/lib/utils'
 
-/** Theme reveal animation: length in ms, and an ease-in-out curve so the circle grows evenly. */
 const REVEAL_DURATION = 1000
 const REVEAL_EASING = 'cubic-bezier(0.65, 0, 0.35, 1)'
 
-/**
- * Switches between light and dark mode. The new theme is revealed as a circle growing from the
- * button (View Transitions API); browsers without it, and reduced-motion users, switch instantly.
- * Both icons are rendered and CSS shows the right one, so server and client markup always match.
- */
+/** Light/dark switch revealed as a circle growing from the button (View Transitions); other
+ * browsers switch instantly. Both icons render and CSS picks one, so server and client match. */
 export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme()
 

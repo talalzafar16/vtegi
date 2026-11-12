@@ -67,12 +67,8 @@ const smooth = (x: number) => x * x * (3 - 2 * x)
 /** Same angle within -π..π, so a released globe springs back the short way round. */
 const wrap = (angle: number) => angle - 2 * Math.PI * Math.round(angle / (2 * Math.PI))
 
-/**
- * Interactive WebGL globe (cobe) with satellites, data packets and a mono readout. It spins in
- * and settles on the U.S.; then packets fly from HQ across the country, pinging where they land,
- * while satellites orbit and beam uplinks down to HQ. Drag to spin or tilt it; let go and it
- * coasts, then drifts back. Reduced motion: a still globe with its orbits.
- */
+/** Interactive cobe globe: spins in and settles on the U.S., packets fly from HQ, satellites
+ * orbit. Drag to spin or tilt; it coasts, then drifts back. Reduced motion: a still globe. */
 export function Globe({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const overlayRef = useRef<HTMLCanvasElement>(null)
@@ -160,7 +156,6 @@ export function Globe({ className }: { className?: string }) {
         phi,
         theta,
         scale,
-        // HQ: a slow, steady beacon.
         markers: [
           {
             location: headquarters,

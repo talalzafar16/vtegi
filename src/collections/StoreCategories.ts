@@ -10,11 +10,6 @@ const listOf = (distributor: 'ingram' | 'pax8', kind: 'category' | 'brand') => (
   filterOptions: { distributor: { equals: distributor }, kind: { equals: kind } },
 })
 
-/**
- * The online store's categories, managed by Terry: order (drag), show/hide, wording, and which
- * distributor products appear in each. Pages read these from the database on every request, so
- * changes show on the website right away.
- */
 export const StoreCategories: CollectionConfig = {
   slug: 'store-categories',
   labels: { singular: 'Store Category', plural: 'Store Categories' },

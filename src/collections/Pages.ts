@@ -3,7 +3,6 @@ import { slugField, type CollectionConfig } from 'payload'
 import { authenticated, publishedOrAuthenticated } from '@/access'
 import { revalidateHooks } from '@/hooks/revalidate'
 
-/** Simple text pages (Privacy Policy, Accessibility, ...), served at /[slug]. */
 export const Pages: CollectionConfig = {
   slug: 'pages',
   versions: { drafts: true },

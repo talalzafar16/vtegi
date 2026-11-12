@@ -2,10 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { isAdmin } from '@/access'
 
-/**
- * History of distributor name syncs (see features/store/sync.ts), plus the "Sync now" button's
- * endpoint: POST /api/store-syncs/start. Read-only in the admin; the sync writes these entries.
- */
+// Sync History, plus the Sync now button's endpoint: POST /api/store-syncs/start.
 export const StoreSyncs: CollectionConfig = {
   slug: 'store-syncs',
   labels: { singular: 'Sync', plural: 'Sync History' },

@@ -1,6 +1,5 @@
 import type { Access, FieldAccess } from 'payload'
 
-/** Any visitor, signed in or not. */
 export const anyone: Access = () => true
 
 /** Any signed-in admin-panel user (admin or editor). */

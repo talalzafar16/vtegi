@@ -3,10 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { isAdmin } from '@/access'
 import { inquiryTypes, organizationTypes, timelines } from '@/features/request-form/options'
 
-/**
- * Website request-form submissions. Admin-only: the public form creates leads
- * through a server action (Local API), never through the open REST API.
- */
+// Admin-only: the public form creates leads through a server action, never the REST API.
 export const Leads: CollectionConfig = {
   slug: 'leads',
   defaultSort: '-createdAt',

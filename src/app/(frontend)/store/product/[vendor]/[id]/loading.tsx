@@ -2,7 +2,6 @@ import { Section } from '@/components/ui/section'
 
 const bar = 'animate-pulse rounded bg-ink-100 on-dark:bg-white/5'
 
-/** Shown while the distributor loads the product (the first visit can take a few seconds). */
 export default function ProductLoading() {
   return (
     <Section className="py-12 md:py-16">

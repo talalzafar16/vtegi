@@ -18,10 +18,7 @@ export type SubmitResult =
 const MIN_FILL_MS = 3000 // people take longer than this; many bots don't
 const MAX_PER_HOUR = 3
 
-/**
- * Handles a website request. Server actions are public endpoints, so everything is
- * re-validated here; the browser's validation is only for a nicer experience.
- */
+/** Server actions are public endpoints, so everything is re-validated here. */
 export async function submitRequest(
   input: RequestInput,
   meta: { startedAt: number; turnstileToken?: string },

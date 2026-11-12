@@ -17,7 +17,6 @@ export type ProductSummary = {
 /** Everything a product page shows. Browser-safe, like ProductSummary. */
 export type ProductDetail = ProductSummary & {
   description: string | null
-  /** Label/value facts, e.g. UPC, dimensions, weight. */
   facts: { label: string; value: string }[]
 }
 
@@ -32,5 +31,4 @@ export type PriceOption = {
   tiers: { minQuantity: number; cost: number }[]
 }
 
-/** A page of products plus how many exist in total. */
 export type ProductPage = { total: number; products: ProductSummary[] }

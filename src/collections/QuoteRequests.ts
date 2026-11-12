@@ -6,11 +6,7 @@ import { billingTerms, manualReasons, quoteStatuses, vendors } from '@/features/
 
 const money = { type: 'number', admin: { step: 0.01 } } as const
 
-/**
- * Every "Request a Quote" from the online store, with the exact price that was quoted:
- * distributor prices change and their APIs keep no history. Admin-only, like Leads; the store
- * creates these on the server.
- */
+// Admin-only. Keeps the exact price quoted, since distributors keep no price history.
 export const QuoteRequests: CollectionConfig = {
   slug: 'quote-requests',
   defaultSort: '-createdAt',
@@ -24,8 +20,7 @@ export const QuoteRequests: CollectionConfig = {
   access: { read: isAdmin, create: isAdmin, update: isAdmin, delete: isAdmin },
   hooks: {
     beforeChange: [
-      // QUO-<yy><number>, e.g. QUO-26014: numbered within the year, starting from the number set in
-      // Store Settings so website quotes continue after VTEGI's manual ones.
+      // QUO-<yy><nnn>, continuing from the first quote number in Store Settings.
       async ({ data, operation, req }) => {
         if (operation !== 'create' || data.quoteNumber) return data
         const year = new Date().getFullYear()

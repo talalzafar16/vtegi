@@ -10,14 +10,12 @@ type PageHeroProps = {
   eyebrow: ReactNode
   title: string
   intro?: string | null
-  /** Buttons or meta info under the intro. */
   children?: ReactNode
 }
 
 // Each line rises in a beat after the one above it.
 const rise = 'animate-rise motion-reduce:animate-none'
 
-/** Dark header for inner pages: eyebrow, h1, intro and optional actions. */
 export function PageHero({ eyebrow, title, intro, children }: PageHeroProps) {
   return (
     <section

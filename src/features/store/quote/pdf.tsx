@@ -15,8 +15,7 @@ import { formatPrice } from '@/lib/format'
 
 import type { QuoteDocument } from './document'
 
-// The quote PDF, laid out like VTEGI's Word template: red title bands, grey label cells, Arial-like
-// type (Helvetica is built into PDF readers, so no font files are needed).
+// Laid out like VTEGI's Word template. Helvetica is built into PDF readers, so no font files.
 
 // Never hyphenate ("month-ly"); whole words wrap instead.
 Font.registerHyphenationCallback((word) => [word])
@@ -234,7 +233,6 @@ function QuotePdf({ quote, logo }: { quote: QuoteDocument; logo: Buffer }) {
   )
 }
 
-/** The quote as a PDF file, ready to attach to an email. */
 export async function renderQuotePdf(quote: QuoteDocument) {
   const logo = await readFile(path.join(process.cwd(), 'public', 'brand', 'vtegi-logo-full.png'))
   return renderToBuffer(<QuotePdf quote={quote} logo={logo} />)

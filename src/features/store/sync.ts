@@ -2,10 +2,8 @@ import type { Payload } from 'payload'
 
 import { ingram, pax8 } from './vendors'
 
-// Distributor Lists sync: refreshes the category and brand names Terry picks from in Store Categories.
-// Ingram has no categories endpoint, so its names are found by sampling searches (current products
-// only); Pax8 brands come from its full catalog. Started from the admin ("Sync now") or
-// `yarn store:sync`; every run is recorded in Sync History.
+// Refreshes the distributor names behind the Store Categories dropdowns. Ingram has no categories
+// endpoint, so its names come from sampling searches; Pax8 brands come from its full catalog.
 
 const KEYWORDS = [
   'laptop',
@@ -77,7 +75,6 @@ export type SyncReport = {
   ingramCategories: Names
   ingramBrands: Names
   pax8Brands: Names
-  /** Ingram subcategories per category, for the command-line report. */
   subCategories: Map<string, Names>
   added: number
 }
@@ -197,7 +194,6 @@ export async function startSync(payload: Payload, userId?: number) {
   })
 }
 
-/** Runs the sync for a recorded run and saves the outcome (or the error) to Sync History. */
 export async function runSync(payload: Payload, runId: number, log?: (message: string) => void) {
   let lastSaved = 0
   const progress: Progress = async (message, force = false) => {

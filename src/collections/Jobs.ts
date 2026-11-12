@@ -3,7 +3,6 @@ import { slugField, type CollectionConfig } from 'payload'
 import { authenticated, publishedOrAuthenticated } from '@/access'
 import { revalidateHooks } from '@/hooks/revalidate'
 
-/** Open positions. Unpublish a job to close it. */
 export const workplaceOptions = [
   { label: 'On-site', value: 'on-site' },
   { label: 'Hybrid', value: 'hybrid' },

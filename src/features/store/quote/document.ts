@@ -3,10 +3,8 @@ import type { QuoteRequest, SiteSetting } from '@/payload-types'
 
 import { billingPeriods, toCents } from '../pricing'
 
-/**
- * Everything printed on a quote, laid out like VTEGI's Word template (QUO-26XXX). Built from the
- * saved Quote Request, so the PDF and the emails always show exactly what was recorded.
- */
+/** What a quote prints, laid out like VTEGI's Word template. Built from the saved Quote Request,
+ * so the PDF and emails show exactly what was recorded. */
 export type QuoteDocument = ReturnType<typeof quoteDocument>
 
 export function quoteDocument(quote: QuoteRequest, site: SiteSetting, salesperson: string | null) {

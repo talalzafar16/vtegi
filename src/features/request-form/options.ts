@@ -1,5 +1,4 @@
-// Shared by the Leads collection (admin), the form UI and server validation.
-// Keep this file dependency-free: it is bundled into the browser.
+// Dependency-free: shared by the Leads collection, the form and the server, and bundled into the browser.
 
 export const inquiryTypes = [
   { label: 'Technology service request', value: 'service' },
@@ -42,7 +41,6 @@ export const contactMethods = [
   { label: 'Phone', value: 'phone' },
 ] as const
 
-/** Value used when the visitor wants help choosing a solution. */
 export const HELP_ME_CHOOSE = 'help'
 
 export type InquiryType = (typeof inquiryTypes)[number]['value']

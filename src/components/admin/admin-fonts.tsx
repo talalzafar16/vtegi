@@ -5,7 +5,6 @@ import type { ReactNode } from 'react'
 const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'] })
 const mono = JetBrains_Mono({ subsets: ['latin'] })
 
-/** Admin provider: points Payload's font variables at the website's fonts. */
 export function AdminFonts({ children }: { children?: ReactNode }) {
   return (
     <>

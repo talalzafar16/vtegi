@@ -19,20 +19,16 @@ import {
   type VendorId,
 } from './vendors'
 
-// The store's view of the distributors: listings, search, product pages and quote prices.
-// Only browser-safe data leaves this file through the listing and page functions: product details
-// and customer prices after Terry's markup. Distributor costs and the markup itself never do.
+// Listings, search, product pages and quote prices. Only browser-safe data leaves this file:
+// customer prices after markup, never distributor costs or the markup itself.
 
 export type Tab = 'hardware' | 'software'
 
 export type StoreProduct = ProductSummary & {
   /** Customer price for one unit, or null ("Request a Quote" only). */
   price: number | null
-  /** Shown after the price: "per unit", "/user/month", "one-time". */
   priceSuffix?: string
-  /** Software subscriptions show their cheapest term: "From $X /user/month". */
   priceFrom?: boolean
-  /** Icon of the store category the product belongs to. */
   icon: Category['icon']
 }
 
@@ -43,7 +39,6 @@ export type Listing = {
   hasNext: boolean
   /** Exact product count when known (software). */
   total?: number
-  /** The distributor could not be reached. */
   failed?: boolean
 }
 
@@ -55,7 +50,6 @@ const INGRAM_PAGE_SIZE = 50
 
 const unavailable: Listing = { products: [], hasNext: false, failed: true }
 
-/** Tabs a category has, in display order. */
 export const tabsOf = (category: Category): Tab[] => [
   ...(category.ingramGroups.length > 0 ? (['hardware'] as const) : []),
   ...(category.pax8Rules.length > 0 ? (['software'] as const) : []),
@@ -68,21 +62,16 @@ export function filtersOf(category: Category, tab: Tab): Filter[] {
   return brands.map((brand) => ({ key: toKey(brand), label: brand }))
 }
 
-/**
- * The filter to apply. Hardware always lists one group (the first by default), since each group is
- * a separate distributor search; software shows all brands together unless one is chosen.
- */
+/** Hardware always lists one group (the first by default), since each is a separate search;
+ * software shows all brands unless one is chosen. */
 export function resolveFilter(category: Category, tab: Tab, requested?: string) {
   const keys = filtersOf(category, tab).map((f) => f.key)
   if (requested && keys.includes(requested)) return requested
   return tab === 'hardware' ? (keys[0] ?? null) : null
 }
 
-/**
- * The visible store category a product belongs to, or undefined (then the store doesn't sell it).
- * Hardware prefers a product group whose keyword is in the product name, so a server lands in
- * Infrastructure rather than another category that also uses "Computer Systems".
- */
+/** The visible category a product belongs to (none = not sold). Hardware prefers a group whose
+ * keyword is in the name, so a server lands in Infrastructure, not another Computer Systems one. */
 export function categoryOf(product: ProductSummary, categories: Category[]) {
   if (product.vendor === 'pax8') {
     return categories.find((c) => c.pax8Rules.some((rule) => matchesRule(product, rule)))
@@ -149,10 +138,8 @@ function withSoftwarePrices(items: ProductSummary[], settings: Settings, iconOf:
   })
 }
 
-/**
- * The price a software card shows: the cheapest monthly cost across subscription terms, or the
- * one-time price for products that are bought outright (e.g. perpetual licences).
- */
+/** Software card price: the cheapest monthly cost across terms, or the one-time price for
+ * products bought outright. */
 function cardPrice(options: PriceOption[]) {
   const monthly = pax8.lowestMonthlyCost(options)
   if (monthly) {
@@ -241,10 +228,8 @@ async function searchIngram(query: string, page: number, { settings, categories 
   return { items, hasNext: page * INGRAM_PAGE_SIZE < result.total }
 }
 
-/**
- * Pax8 products with every search word in their name, brand or SKU, in visible categories. Closest
- * matches first: names starting with the search, then names containing it, then the rest (A–Z).
- */
+/** Pax8 products containing every search word (name, brand or SKU) in visible categories;
+ * names starting with the search first, then names containing it, then A to Z. */
 async function searchPax8(query: string, { settings, categories }: SearchContext) {
   const phrase = query.toLowerCase()
   const words = phrase.split(/\s+/).filter(Boolean)
@@ -259,7 +244,6 @@ async function searchPax8(query: string, { settings, categories }: SearchContext
   return matched.sort((a, b) => rank(a.name) - rank(b.name))
 }
 
-/** Search results for one tab, with customer prices. */
 export async function searchStore(query: string, tab: Tab, page: number): Promise<Listing> {
   const context = await searchContext()
   const iconOf: IconOf = (p) => categoryOf(p, context.categories)?.icon ?? 'cart'
@@ -289,11 +273,8 @@ export async function searchStore(query: string, tab: Tab, page: number): Promis
   }
 }
 
-/**
- * How many results each search tab has, for the tab labels. Software is exact; hardware counts the
- * first page only ("24+" when there are more), since Ingram's total includes products we filter out.
- * Null when that distributor couldn't be reached.
- */
+/** Result counts for the search tabs. Hardware counts its first page only (24+), because
+ * Ingram's total includes products we filter out. Null when a distributor is down. */
 export async function searchCounts(query: string) {
   const context = await searchContext()
   const [hardware, software] = await Promise.all([
@@ -309,10 +290,8 @@ export async function searchCounts(query: string) {
   return { hardware, software } satisfies Record<Tab, { count: number; more: boolean } | null>
 }
 
-/**
- * A product and the visible store category it belongs to, or null when the store doesn't sell it
- * (unknown, discontinued, hidden brand or outside every category). Throws if the distributor is down.
- */
+/** A product and its visible category, or null when the store doesn't sell it.
+ * Throws if the distributor is down. */
 export const getProduct = cache(async (vendor: VendorId, id: string) => {
   const [settings, categories] = await Promise.all([getStoreSettings(), getStoreCategories()])
   const product: ProductDetail | null =
@@ -329,17 +308,15 @@ export function splitName(product: ProductSummary) {
   return { title, highlights: highlights.filter(Boolean) }
 }
 
-/** One way to buy a product, as the product page shows it. Browser-safe: no costs. */
+/** One way to buy a product, as its page shows it (no costs). */
 export type Offer = {
   key: string
-  /** e.g. "1-year commitment, billed monthly"; null for hardware. */
   label: string | null
   billingTerm: PriceOption['billingTerm'] | null
   /** "No. Months" on the quote; null for hardware and one-time purchases. */
   months: number | null
   /** Times the price is billed over the term (see billingPeriods). */
   periods: number
-  /** "unit" for hardware; "user", "device"… for software. */
   unit: string
   /** Price per unit at each discount level; empty when prices are hidden or unknown. */
   levels: PriceLevel[]
@@ -415,7 +392,6 @@ export async function productOffers(product: ProductSummary) {
 export type QuotePricing = {
   term: { billingTerm: PriceOption['billingTerm']; label: string; months: number | null } | null
   price: PriceBreakdown | null
-  /** Set when the quote can't be priced automatically. */
   manualReason: 'no-price' | 'volume' | 'unavailable' | null
 }
 

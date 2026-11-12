@@ -3,11 +3,6 @@ import type { CollectionConfig } from 'payload'
 import { authenticated } from '@/access'
 import { vendors } from '@/features/store/options'
 
-/**
- * Category and brand names found at each distributor, for the Store Categories dropdowns (so Terry
- * picks names instead of typing them). Filled by the sync ("Sync now" above the list, or
- * `yarn store:sync`); read-only in the admin.
- */
 export const DistributorLists: CollectionConfig = {
   slug: 'distributor-lists',
   labels: { singular: 'Distributor list entry', plural: 'Distributor Lists' },

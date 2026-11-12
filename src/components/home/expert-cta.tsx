@@ -8,7 +8,6 @@ import type { HomePage } from '@/payload-types'
 
 type ExpertCtaProps = HomePage['expert'] & { phone: string }
 
-/** "Not sure which solution is right for you?" band from Terry's brief. */
 export function ExpertCta({ heading, text, phone }: ExpertCtaProps) {
   return (
     <section data-tone="dark" className="relative overflow-hidden bg-brand-900 text-white">

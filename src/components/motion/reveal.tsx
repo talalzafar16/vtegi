@@ -7,7 +7,6 @@ type RevealProps = {
   children: ReactNode
   /** Seconds to wait; use `index * 0.08` to stagger items in a list. */
   delay?: number
-  /** Starting vertical offset in px. */
   y?: number
   className?: string
 }

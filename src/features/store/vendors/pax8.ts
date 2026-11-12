@@ -81,18 +81,14 @@ const toProduct = (p: RawProduct): ProductSummary => ({
   brand: (p.vendorName ?? '').trim(),
 })
 
-/**
- * The whole Pax8 catalog (about 2,900 products) in a slim form, refreshed in the background so
- * visitors don't wait for the ~30 calls it takes. Pax8 has no categories, so the store sorts these
- * into Terry's categories itself (categories.ts).
- */
+/** The whole Pax8 catalog (about 2,900 products, ~30 calls), refreshed in the background.
+ * Pax8 has no categories, so the store sorts these itself (categories.ts). */
 export function allProducts() {
   return cachedStale<ProductSummary[]>(key('products'), refreshAt.productInfo, async () => {
     const size = 100 // Pax8's maximum page size
     const first = await pax8<ProductList>(`/products?page=0&size=${size}`)
     const pages = first.page?.totalPages ?? 1
     const rest: ProductList[] = []
-    // Remaining pages, 10 at a time.
     for (let page = 1; page < pages; page += 10) {
       const batch = Array.from({ length: Math.min(10, pages - page) }, (_, i) =>
         pax8<ProductList>(`/products?page=${page + i}&size=${size}`),
@@ -149,10 +145,7 @@ type RawPricing = {
   }[]
 }
 
-/**
- * Units we can price per person, licence or device, mapped to one name each. Usage-based units
- * (GB, workloads, "billable devices"…) need a manual quote.
- */
+/** Units priced per person, licence or device. Usage-based units (GB, workloads) need a manual quote. */
 const UNITS: Record<string, string> = {
   user: 'user',
   users: 'user',
@@ -182,11 +175,8 @@ function optionLabel(billingTerm: PriceOption['billingTerm'], months: number | n
   return `${months / 12}-year commitment, ${billed}`
 }
 
-/**
- * Ways to buy a product (monthly, annual or one-time) with VTEGI's cost per quantity tier. Products
- * that can't be priced simply (usage-based, several prices per term) get none: a manual quote.
- * `fresh` skips the cache (quotes).
- */
+/** Ways to buy a product (monthly, annual or one-time) with VTEGI's cost per quantity tier.
+ * Products that can't be priced simply get none (a manual quote). `fresh` skips the cache. */
 export async function priceOptions(productId: string, { fresh = false } = {}) {
   if (fresh) return loadPriceOptions(productId)
   // A failed lookup (e.g. a huge price list timing out) is remembered briefly, so pages don't wait

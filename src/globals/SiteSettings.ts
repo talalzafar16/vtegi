@@ -3,7 +3,6 @@ import type { GlobalConfig } from 'payload'
 import { anyone, isAdmin, isAdminField } from '@/access'
 import { revalidateGlobal } from '@/hooks/revalidate'
 
-/** Company facts used across the site (header, footer, contact, contracting page). */
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   admin: {

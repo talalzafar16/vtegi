@@ -31,7 +31,6 @@ function summaryRows(data: RequestInput, solutionTitle?: string) {
   return emailRows(rows)
 }
 
-/** Internal alert to the VTEGI team. */
 export function newLeadEmail(
   data: RequestInput,
   solutionTitle: string | undefined,
@@ -47,7 +46,6 @@ export function newLeadEmail(
   }
 }
 
-/** Confirmation sent to the person who submitted the form. */
 export function confirmationEmail(data: RequestInput, solutionTitle: string | undefined) {
   return {
     subject: 'We received your request | VTEGI',

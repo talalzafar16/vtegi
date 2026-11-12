@@ -4,10 +4,8 @@ import { HeroBackdrop } from '@/components/ui/hero-backdrop'
 
 const STORAGE_KEY = 'vtegi-intro'
 
-/**
- * Inlined into <head> as a string, so it runs before the first paint and must stay
- * self-contained (no imports or outer variables). See the intro section in globals.css.
- */
+/** Inlined into <head> as a string so it runs before first paint: must stay self-contained
+ * (no imports or outer variables). Timing lives in globals.css. */
 function startIntro(storageKey: string) {
   const html = document.documentElement
   try {
@@ -41,12 +39,8 @@ export function IntroScript() {
   )
 }
 
-/**
- * First-visit intro, once per browser session and never for reduced-motion users: the mark and
- * wordmark rise in while the HQ coordinates type out and a red signal line counts to 100%, then
- * the panel lifts away to reveal the page. Hidden unless the script above turned it on, so it
- * costs nothing on later page loads or without JavaScript.
- */
+/** First-visit intro, once per session and never with reduced motion. Hidden unless the script
+ * above turned it on, so later page loads pay nothing. */
 export function IntroLoader() {
   return (
     <div

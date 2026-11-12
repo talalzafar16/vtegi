@@ -10,17 +10,13 @@ import type { StoreSync, User } from '@/payload-types'
 const when = (iso: string) =>
   new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
 
-/** The most recent sync, or null when there has never been one. */
 async function fetchLatest(api: string): Promise<StoreSync | null> {
   const response = await fetch(`${api}?sort=-createdAt&limit=1&depth=0`, { credentials: 'include' })
   if (!response.ok) throw new Error(`Sync history request failed (${response.status})`)
   return (await response.json()).docs[0] ?? null
 }
 
-/**
- * "Sync now" for the distributor name lists, shown above Distributor Lists and Sync History.
- * Starts the sync on the server, then follows its progress until it finishes. Admins only.
- */
+/** Sync now panel: starts the sync, then follows its progress until it finishes. Admins only. */
 export function SyncPanel() {
   const { config } = useConfig()
   const { user } = useAuth<User>()

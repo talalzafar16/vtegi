@@ -9,11 +9,8 @@ import { renderQuotePdf } from './pdf'
 
 const errorText = (error: unknown) => (error instanceof Error ? error.message : String(error))
 
-/**
- * Emails the quote and records the outcome on the Quote Request (when the customer was emailed, or
- * what failed). If the customer's quote email or its PDF fails, the request becomes "Needs manual
- * quote" and VTEGI gets an alert instead of a copy. The request itself is already saved.
- */
+/** Emails the quote and records the outcome. If the customer's email or PDF fails, the request
+ * becomes Needs manual quote and VTEGI gets an alert instead of a copy. */
 export async function deliverQuote(payload: Payload, quote: QuoteRequest, adminUrl: string) {
   const [site, store] = await Promise.all([
     payload.findGlobal({ slug: 'site-settings' }),

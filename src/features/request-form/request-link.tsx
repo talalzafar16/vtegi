@@ -7,12 +7,8 @@ import { requestHref } from '@/lib/navigation'
 
 type RequestLinkProps = { solution: string } & Omit<ComponentProps<typeof Link>, 'href'>
 
-/**
- * Links to the request form with a solution pre-selected.
- * - On a page that has the form (#request): updates the URL and scrolls there instantly,
- *   with no server round trip (Next.js syncs pushState with useSearchParams).
- * - Anywhere else, or without JavaScript: goes to /request?solution=...
- */
+/** Links to the form with a solution pre-selected: scrolls there on pages that have the form,
+ * otherwise opens /request?solution=... */
 export function RequestLink({ solution, onClick, ...props }: RequestLinkProps) {
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e)

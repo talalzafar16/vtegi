@@ -14,7 +14,7 @@ import { RequestLink } from '@/features/request-form/request-link'
 
 type SolutionsSectionProps = HomePage['solutions'] & { solutions: Solution[] }
 
-/** Step 1 of the home page flow: pick a solution. "Request" pre-selects it in the form below. */
+/** Request pre-selects the solution in the form below. */
 export function SolutionsSection({ heading, intro, solutions }: SolutionsSectionProps) {
   return (
     <Section id="solutions">
@@ -83,7 +83,7 @@ function SolutionCard({ solution, index }: { solution: Solution; index: number }
   )
 }
 
-/** The store is not a CMS solution yet (e-commerce is a later phase). */
+/** Hardcoded: the store isn't a CMS solution. */
 function StoreCard() {
   return (
     <div

@@ -1,5 +1,4 @@
-// Shared by the Quote Requests collection (admin), the quote form and the server.
-// Keep this file dependency-free: it is bundled into the browser.
+// Dependency-free: shared by the admin, the quote form and the server, and bundled into the browser.
 
 // Phase 1 distributors. Arrow, TD SYNNEX and Carahsoft come later.
 export const vendors = [
@@ -20,7 +19,6 @@ export const quoteStatuses = [
   { label: 'Quoted manually', value: 'quoted' },
 ] as const
 
-/** Why a request couldn't be priced automatically. */
 export const manualReasons = [
   { label: 'No price available', value: 'no-price' },
   { label: 'Custom volume pricing', value: 'volume' },

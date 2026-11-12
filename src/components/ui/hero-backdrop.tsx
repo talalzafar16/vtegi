@@ -1,7 +1,4 @@
-/**
- * Backdrop for dark hero sections: an engineering-drawing hairline grid, a deep oxblood
- * vignette, and a red signal line along the bottom edge. Decorative only.
- */
+/** Dark hero backdrop: hairline grid, oxblood vignette and a red line along the bottom edge. */
 export function HeroBackdrop() {
   return (
     <>

@@ -10,7 +10,6 @@ const labelList = (name: string, description: string) => ({
   fields: [{ name: 'label', type: 'text' as const, required: true }],
 })
 
-/** Editable copy for /company/about. */
 export const AboutPage: GlobalConfig = {
   slug: 'about-page',
   admin: { group: 'Website', description: 'Text for the About page.' },

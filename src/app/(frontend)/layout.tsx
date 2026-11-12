@@ -12,7 +12,6 @@ import { cn } from '@/lib/utils'
 
 import './globals.css'
 
-// Archivo's width axis gives headlines the wide, engineered feel of the VTEGI wordmark.
 const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-archivo' })
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 

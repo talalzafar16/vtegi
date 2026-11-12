@@ -1,12 +1,5 @@
-/**
- * One-time move of existing uploads from the local /media folder to cloud storage
- * (Supabase Storage / any S3-compatible bucket). Run after adding the S3_* variables to .env:
- *
- *   yarn media:upload
- *
- * Uploads every file the database references, under the same filename, so existing
- * media records keep working unchanged. Safe to re-run: files already uploaded are skipped.
- */
+// One-time copy of local /media uploads to S3 storage (same filenames, safe to re-run).
+// Run after adding the S3_* variables: yarn media:upload
 import { HeadObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import config from '@payload-config'
 import { existsSync, readFileSync } from 'fs'

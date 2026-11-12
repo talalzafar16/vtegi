@@ -8,9 +8,6 @@ import { organizationTypes } from '@/features/request-form/options'
 import { manualReasons, vendors } from '../options'
 import type { QuoteDocument } from './document'
 
-// Quote emails. Customers get the quote (PDF attached) or a "we're preparing it" note; VTEGI gets a
-// copy of every quote or an alert when a request needs a manual quote.
-
 const money = (amount: number | null | undefined) =>
   typeof amount === 'number' ? formatPrice(amount) : undefined
 
@@ -33,7 +30,6 @@ const customerRows = (quote: QuoteRequest): [string, string | null | undefined][
   ['Notes', quote.notes],
 ]
 
-/** To the customer: their quote, with the PDF attached. */
 export function quoteEmail(quote: QuoteRequest, doc: QuoteDocument) {
   return {
     subject: `Your VTEGI quote ${doc.number}`,
@@ -95,7 +91,6 @@ export function quoteCopyEmail(quote: QuoteRequest, adminUrl: string) {
   }
 }
 
-/** To VTEGI: a request that couldn't be priced automatically. */
 export function manualQuoteEmail(quote: QuoteRequest, adminUrl: string) {
   const reason = labelOf(manualReasons, quote.manualReason) ?? 'Needs a manual quote'
   return {

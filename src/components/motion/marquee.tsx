@@ -12,10 +12,7 @@ type MarqueeProps = {
   className?: string
 }
 
-/**
- * Infinite horizontal scroller (e.g. vendor logos). Pauses on hover, has a visible
- * pause button (WCAG 2.2.2) and stays still for reduced-motion users.
- */
+/** Infinite logo scroller: pauses on hover, has a pause button (WCAG 2.2.2), still for reduced motion. */
 export function Marquee({ children, duration = 40, className }: MarqueeProps) {
   const [paused, setPaused] = useState(false)
   const track = cn(

@@ -1,12 +1,8 @@
 import { revalidatePath } from 'next/cache'
 import type { CollectionConfig, GlobalAfterChangeHook, RequestContext } from 'payload'
 
-/**
- * Content changed → refresh every page. The site is small and most content
- * (settings, solutions, partners) appears in the shared header/footer, so a
- * full refresh is the simplest correct choice.
- * Scripts outside Next.js (e.g. the seed) pass `context: { disableRevalidate: true }`.
- */
+/** Any change refreshes every page: most content shows in the shared header and footer.
+ * Scripts outside Next.js pass `context: { disableRevalidate: true }`. */
 function revalidateSite(context: RequestContext) {
   if (!context.disableRevalidate) revalidatePath('/', 'layout')
 }

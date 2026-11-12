@@ -1,10 +1,5 @@
-/**
- * Creates the starter store categories (Terry's 9) with drafted distributor mappings. Safe to
- * re-run: it only creates categories that don't exist yet and never changes edits made in the admin.
- * Run `yarn store:sync` first, so the Ingram/Pax8 names below exist in Distributor Lists.
- *
- * Run: yarn store:seed
- */
+// Creates Terry's 9 starter categories with drafted mappings; never changes existing ones.
+// Run `yarn store:sync` first so the distributor names exist. Run: yarn store:seed
 import config from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 

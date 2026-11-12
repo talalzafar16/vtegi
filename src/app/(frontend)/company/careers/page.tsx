@@ -19,7 +19,6 @@ export const metadata: Metadata = {
 
 const careerInquiry = '/request?inquiry=career'
 
-// Adapted from the current vtegi.com careers page.
 const process = [
   {
     title: 'Understanding our core values',

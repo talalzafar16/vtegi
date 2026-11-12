@@ -1,5 +1,4 @@
-// Store pricing: distributor cost → customer price. Dependency-free, so product pages, the quote
-// form and quote emails all share exactly the same math.
+// Distributor cost to customer price. Dependency-free, so pages, the quote form and emails share it.
 
 export type DiscountLevel = { minQuantity: number; discountPercent: number }
 
@@ -11,13 +10,11 @@ export type PricingRules = {
 }
 
 export type PriceBreakdown = {
-  /** Distributor cost per unit. */
   cost: number
   markupPercent: number
   /** Per unit after markup, before any quantity discount. */
   listPrice: number
   discountPercent: number
-  /** Per unit after the quantity discount. */
   unitPrice: number
   quantity: number
   /** Times the price is billed over the quoted term (see billingPeriods). */
@@ -37,14 +34,11 @@ export function discountFor(quantity: number, levels: DiscountLevel[]) {
     .discountPercent
 }
 
-/** Large orders VTEGI prices itself (Store Settings → "Custom pricing from quantity"). */
 export const needsCustomPricing = (quantity: number, rules: PricingRules | null) =>
   Boolean(rules?.customPricingFrom && quantity >= rules.customPricingFrom)
 
-/**
- * How many times a price is billed over the quoted term: 12 for a 1-year term billed monthly,
- * 1 for a year billed annually, a month-to-month subscription or a one-time purchase.
- */
+/** Times a price is billed over the quoted term: 12 for a year billed monthly; 1 for annual
+ * billing, month-to-month or one-time. */
 export function billingPeriods(
   billingTerm: 'monthly' | 'annual' | 'one-time' | null | undefined,
   months: number | null | undefined,
@@ -54,12 +48,8 @@ export function billingPeriods(
   return 1
 }
 
-/**
- * Customer price for `quantity` units: markup on the distributor cost, then the quantity discount.
- * `periods` multiplies the total for subscriptions quoted over a term.
- * Null when there is nothing reliable to show (no cost, no markup set yet, or a quantity that
- * gets custom pricing): the request then goes to VTEGI to price manually.
- */
+/** Price for `quantity` units: markup, then the volume discount (times `periods` for terms).
+ * Null when it can't be priced (no cost or markup, or custom pricing): a manual quote. */
 export function calculatePrice(
   cost: number | null | undefined,
   quantity: number,
@@ -94,10 +84,8 @@ export type PriceLevel = {
   unitPrice: number
 }
 
-/**
- * The price table a product page shows: one row per discount level up to custom pricing, e.g.
- * 1–4 $110 · 5–9 $107.80 · 10–24 · 25–49. `costAt` gives the distributor cost for a quantity.
- */
+/** The product page's price table: one row per discount level up to custom pricing.
+ * `costAt` gives the distributor cost for a quantity. */
 export function priceLevels(costAt: (quantity: number) => number | null, rules: PricingRules) {
   const starts = [...new Set([1, ...rules.quantityDiscounts.map((level) => level.minQuantity)])]
     .filter((start) => !needsCustomPricing(start, rules))

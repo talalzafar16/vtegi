@@ -5,11 +5,9 @@ type EmptyStateProps = {
   icon: LucideIcon
   title: string
   text: string
-  /** Usually a ButtonLink. */
   action?: ReactNode
 }
 
-/** Friendly placeholder for lists with nothing published yet. */
 export function EmptyState({ icon: IconComponent, title, text, action }: EmptyStateProps) {
   return (
     <div className="rounded-xl border border-dashed border-ink-300 bg-ink-50 px-6 py-14 text-center on-dark:border-white/15 on-dark:bg-white/[0.03]">

@@ -4,7 +4,6 @@ import { anyone, authenticated } from '@/access'
 import { iconField } from '@/fields/icon'
 import { revalidateHooks } from '@/hooks/revalidate'
 
-/** Technical service areas (Virtualization, Network & Security, ...). Powers /capabilities. */
 export const Capabilities: CollectionConfig = {
   slug: 'capabilities',
   orderable: true,

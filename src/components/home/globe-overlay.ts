@@ -1,8 +1,5 @@
-/**
- * The 2D layer drawn over the cobe globe: satellites on tilted orbits, data packets flying along
- * the links with a ping where they land, and satellite uplinks down to HQ. It reuses cobe's
- * geometry (globe radius, lat/lng mapping, rotation, arc curve), so it stays locked to the globe.
- */
+/** 2D layer over the cobe globe: satellites, packets and uplinks. It reuses cobe's geometry
+ * (radius, lat/lng mapping, rotation, arcs), so it stays locked to the globe. */
 
 export type LatLng = [number, number]
 type Vec3 = [number, number, number]
@@ -12,9 +9,8 @@ type Orbit = { radius: number; tilt: number; roll: number; period: number; start
 const GLOBE = 0.8
 const ELEVATION = 0.05
 
-// Orbits live in view space, so satellites keep circling while the globe turns beneath them.
-// radius: in globe units (the globe is 0.8) · tilt: how open the ellipse looks · roll: its angle
-// on screen · period: seconds per lap (negative = the other way) · start: starting angle.
+// Orbits live in view space, so satellites keep circling while the globe turns. radius: globe
+// units (globe = 0.8) · tilt · roll · period: s per lap (negative = reverse) · start: angle.
 const orbits: Orbit[] = [
   { radius: 0.98, tilt: 0.3, roll: -0.35, period: 16, start: 0.5 },
   { radius: 1.06, tilt: 0.55, roll: 0.5, period: -22, start: 2.6 },
@@ -34,7 +30,6 @@ const TAU = Math.PI * 2
 const easeInOut = (x: number) => (x < 0.5 ? 4 * x ** 3 : 1 - (-2 * x + 2) ** 3 / 2)
 const easeOut = (x: number) => 1 - (1 - x) ** 3
 
-/** cobe's lat/lng → point on the unit sphere. */
 function toUnit([lat, lng]: LatLng): Vec3 {
   const a = (lat * Math.PI) / 180
   const b = (lng * Math.PI) / 180 - Math.PI
@@ -47,7 +42,6 @@ function toView([x, y, z]: Vec3, phi: number, theta: number): Vec3 {
   return [cp * x + sp * z, sp * st * x + ct * y - cp * st * z, -sp * ct * x + st * y + cp * ct * z]
 }
 
-/** A unit-sphere point raised to where cobe draws markers and arc ends. */
 const onSurface = ([x, y, z]: Vec3): Vec3 => {
   const r = GLOBE + ELEVATION
   return [x * r, y * r, z * r]
@@ -72,14 +66,12 @@ function orbitPoint({ radius, tilt, roll }: Orbit, angle: number): Vec3 {
   return [x * Math.cos(roll) - y * Math.sin(roll), x * Math.sin(roll) + y * Math.cos(roll), z]
 }
 
-/** Something worth showing in the readout: a packet landed, or a satellite started an uplink. */
 export type OverlayEvent = { link: number } | { satellite: number }
 
 export type OverlayFrame = {
   phi: number
   theta: number
   scale: number
-  /** Seconds since the layer started; drives orbits, packets and uplinks. */
   time: number
   opacity: number
   /** Reduced motion: orbits and satellites only, nothing moving. */
@@ -168,14 +160,12 @@ export function createOverlay(canvas: HTMLCanvasElement, options: OverlayOptions
     const at = orbitPoint(orbit, angle)
     if (!ctx || hidden(at)) return
     const dir = Math.sign(orbit.period)
-    // A short fading trail behind it.
     for (let i = 0; i < 12; i++) {
       const a = orbitPoint(orbit, angle - dir * (i + 1) * 0.03)
       const b = orbitPoint(orbit, angle - dir * i * 0.03)
       if (hidden(a)) break
       segment(a, b, `rgba(255, 255, 255, ${0.45 * (1 - i / 12)})`, 1.2)
     }
-    // Body with two solar panels across its path; dimmer while it's round the back.
     const [x, y] = toPx(at)
     const [ax, ay] = toPx(orbitPoint(orbit, angle + dir * 0.01))
     ctx.save()

@@ -1,15 +1,10 @@
 @import 'tailwindcss';
 
-/*
- * Two dark variants:
- * - `on-dark:` — the element sits on a dark background: inside a dark section (data-tone="dark")
- *   OR anywhere in dark mode. Use this for text, borders and surfaces (most cases).
- * - `dark:` — only in dark mode (class on <html>, set by next-themes). Use for page/section backgrounds.
- */
+/* `on-dark:` = on any dark background (dark section or dark mode): text, borders, surfaces.
+   `dark:` = dark mode only (class set by next-themes): page and section backgrounds. */
 @custom-variant on-dark (&:where([data-tone='dark'], [data-tone='dark'] *, .dark, .dark *));
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Fonts are loaded with next/font in layout.tsx */
 @theme inline {
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
@@ -46,10 +41,8 @@
   --color-ink-950: oklch(15.5% 0.01 25);
   --color-ink-1000: oklch(11.5% 0.009 25);
 
-  /* Max content width of the site (max-w-site), used by <Container>. */
   --container-site: 90rem;
 
-  /* Fluid headline sizes */
   --text-display: clamp(2.75rem, 1.6rem + 4.8vw, 5.5rem);
   --text-display--line-height: 1.02;
   --text-display--letter-spacing: -0.035em;
@@ -57,15 +50,13 @@
   --text-title--line-height: 1.08;
   --text-title--letter-spacing: -0.03em;
 
-  /* Motion: one long, soft ease-out for the whole site, and unhurried default transitions,
-     so hovers and state changes glide instead of snapping. */
+  /* One soft ease-out for the whole site, and unhurried default transitions. */
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --default-transition-duration: 300ms;
   --default-transition-timing-function: var(--ease-out-quint);
 
   --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
-  /* Mega menu: the panel grows down from the header (even ease-in-out, so the growth is
-     visible), then its links fade in; closing folds it back up. */
+  /* Mega menu: grows down from the header and its links fade in; closing folds it back up. */
   --animate-menu-open: menu-open 650ms cubic-bezier(0.65, 0, 0.35, 1);
   --animate-menu-close: menu-close 450ms cubic-bezier(0.65, 0, 0.35, 1);
   --animate-menu-items: menu-items 500ms var(--ease-out-quint) 200ms both;
@@ -130,7 +121,6 @@
     }
   }
 
-  /* Content drifts up and comes into focus. */
   @keyframes rise {
     from {
       opacity: 0;
@@ -236,11 +226,8 @@
   }
 }
 
-/*
- * First-visit intro (components/layout/intro-loader.tsx). Its inline script sets data-intro on
- * <html> once per browser session: "hold" while the overlay covers the page (page animations wait
- * underneath), "exit" while it lifts (they play), then removes it. All of the timing lives here.
- */
+/* First-visit intro (intro-loader.tsx): data-intro on <html> is hold while the overlay covers
+   the page (page animations wait), then exit while it lifts. All timing lives here. */
 @property --intro-count {
   syntax: '<integer>';
   inherits: false;

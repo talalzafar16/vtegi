@@ -4,10 +4,8 @@ import { cache } from 'react'
 
 import type { PricingRules } from './pricing'
 
-/**
- * Store settings for server code (store pages, quotes). Read with server access, since the
- * markup is admin-only in the API. Prices stay off until a markup has been set.
- */
+/** Store settings for server code, read with server access (the markup is admin-only in the API).
+ * Prices stay off until a markup is set. */
 export const getStoreSettings = cache(async () => {
   const payload = await getPayload({ config })
   const [store, site] = await Promise.all([

@@ -53,7 +53,6 @@ export default async function StoreSearchPage({ searchParams }: Props) {
 
 const isTab = (value?: string): value is Tab => value === 'hardware' || value === 'software'
 
-/** Tabs with result counts, and the results of the chosen (or best) tab. */
 async function SearchResults({
   query,
   requestedTab,

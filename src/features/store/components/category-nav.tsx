@@ -21,7 +21,6 @@ export function StoreTabs({
   tabs: Tab[]
   tab: Tab
   hrefFor: (tab: Tab) => string
-  /** Optional result count per tab, e.g. "12" or "24+". */
   counts?: Partial<Record<Tab, string>>
 }) {
   return (
@@ -67,7 +66,6 @@ type CategoryNavProps = {
   allowAll: boolean
 }
 
-/** A category's tabs and the filter chips under them. */
 export function CategoryNav({ slug, tabs, tab, filters, filter, allowAll }: CategoryNavProps) {
   return (
     <div className="space-y-6">

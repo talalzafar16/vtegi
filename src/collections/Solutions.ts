@@ -4,7 +4,6 @@ import { anyone, authenticated } from '@/access'
 import { iconField } from '@/fields/icon'
 import { revalidateHooks } from '@/hooks/revalidate'
 
-/** Audience solutions (Government, Commercial, ...). Each one powers /solutions/[slug]. */
 export const Solutions: CollectionConfig = {
   slug: 'solutions',
   orderable: true,
