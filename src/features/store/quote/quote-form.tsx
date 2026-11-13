@@ -389,7 +389,7 @@ function Success({
       </Heading>
       <p className="mx-auto mt-3 max-w-sm text-sm text-ink-600 on-dark:text-ink-400">
         {sent
-          ? `We’ve emailed quote ${result.quoteNumber} to ${result.email} as a PDF. Reply to that email to place your order.`
+          ? `We’re emailing quote ${result.quoteNumber} to ${result.email} as a PDF. It usually arrives within a minute; reply to it to place your order.`
           : `A VTEGI specialist will email your quote${result.quoteNumber ? ` (${result.quoteNumber})` : ''} within one business day.`}
       </p>
       <Button variant="outline" className="mt-8" onClick={onReset}>

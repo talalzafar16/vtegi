@@ -2,6 +2,7 @@
 
 import config from '@payload-config'
 import { headers } from 'next/headers'
+import { after } from 'next/server'
 import { getPayload, type Payload } from 'payload'
 import { z } from 'zod'
 
@@ -109,10 +110,19 @@ export async function submitQuote(
     sourceUrl: requestHeaders.get('referer') ?? undefined,
   })
 
+  // Emails go out after the response, so the customer doesn't wait; failures still mark the quote manual.
   const adminUrl = `${requestHeaders.get('origin') ?? ''}/admin/collections/quote-requests/${quote.id}`
-  const status = await deliverQuote(payload, quote, adminUrl)
+  after(() =>
+    deliverQuote(payload, quote, adminUrl).catch((error) =>
+      payload.logger.error({ err: error }, `Quote delivery failed for ${quote.quoteNumber}`),
+    ),
+  )
 
-  return { ok: true, status, quoteNumber: quote.quoteNumber ?? '' }
+  return {
+    ok: true,
+    status: quote.status === 'sent' ? 'sent' : 'manual',
+    quoteNumber: quote.quoteNumber ?? '',
+  }
 }
 
 type QuoteData = Omit<QuoteRequest, 'id' | 'createdAt' | 'updatedAt' | 'quoteNumber'>

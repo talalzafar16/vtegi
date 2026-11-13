@@ -2,6 +2,7 @@
 
 import config from '@payload-config'
 import { headers } from 'next/headers'
+import { after } from 'next/server'
 import { getPayload } from 'payload'
 import { z } from 'zod'
 
@@ -94,23 +95,28 @@ export async function submitRequest(
     },
   })
 
-  // Emails must never lose a lead: it is already saved, so failures are only logged.
-  const settings = await payload.findGlobal({ slug: 'site-settings' })
+  // Emails go out after the response, so the visitor doesn't wait. The lead is already saved,
+  // so failures are only logged.
   const adminUrl = `${requestHeaders.get('origin') ?? ''}/admin/collections/leads/${lead.id}`
-  const internal = newLeadEmail(data, solution?.title, adminUrl)
-  const confirmation = confirmationEmail(data, solution?.title)
-  const results = await Promise.allSettled([
-    payload.sendEmail({
-      to: settings.leadEmail || settings.email,
-      replyTo: data.email,
-      ...internal,
-    }),
-    payload.sendEmail({ to: data.email, replyTo: settings.email, ...confirmation }),
-  ])
-  for (const result of results) {
-    if (result.status === 'rejected')
-      payload.logger.error({ err: result.reason }, 'Lead email failed')
-  }
+  after(async () => {
+    const settings = await payload.findGlobal({ slug: 'site-settings' })
+    const results = await Promise.allSettled([
+      payload.sendEmail({
+        to: settings.leadEmail || settings.email,
+        replyTo: data.email,
+        ...newLeadEmail(data, solution?.title, adminUrl),
+      }),
+      payload.sendEmail({
+        to: data.email,
+        replyTo: settings.email,
+        ...confirmationEmail(data, solution?.title),
+      }),
+    ])
+    for (const result of results) {
+      if (result.status === 'rejected')
+        payload.logger.error({ err: result.reason }, 'Lead email failed')
+    }
+  })
 
   return { ok: true }
 }

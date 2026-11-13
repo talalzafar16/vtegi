@@ -88,13 +88,14 @@ export default buildConfig({
     },
   }),
   sharp,
-  // Sent through SMTP_HOST; without it, Payload prints emails to the console (fine for development).
-  // Port 465 uses SSL, other ports (587) upgrade to TLS. EMAIL_FROM must be the SMTP mailbox.
+  // Sent through SMTP_HOST (without it, emails print to the console). Port 465 = SSL, 587 = TLS.
+  // EMAIL_FROM must be the SMTP mailbox; `pool` reuses the logged-in connection (logins are slow).
   email: process.env.SMTP_HOST
     ? nodemailerAdapter({
         defaultFromAddress: process.env.EMAIL_FROM || process.env.SMTP_USER || '',
         defaultFromName: 'VTEGI Website',
         transportOptions: {
+          pool: true,
           host: process.env.SMTP_HOST,
           port: Number(process.env.SMTP_PORT) || 587,
           secure: Number(process.env.SMTP_PORT) === 465,
