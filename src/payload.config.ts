@@ -1,5 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { resendAdapter } from '@payloadcms/email-resend'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
@@ -88,12 +88,20 @@ export default buildConfig({
     },
   }),
   sharp,
-  // Without an API key, Payload prints emails to the console (fine for development).
-  email: process.env.RESEND_API_KEY
-    ? resendAdapter({
-        apiKey: process.env.RESEND_API_KEY,
-        defaultFromAddress: process.env.EMAIL_FROM || 'website@vtegi.com',
+  // Sent through SMTP_HOST; without it, Payload prints emails to the console (fine for development).
+  // Port 465 uses SSL, other ports (587) upgrade to TLS. EMAIL_FROM must be the SMTP mailbox.
+  email: process.env.SMTP_HOST
+    ? nodemailerAdapter({
+        defaultFromAddress: process.env.EMAIL_FROM || process.env.SMTP_USER || '',
         defaultFromName: 'VTEGI Website',
+        transportOptions: {
+          host: process.env.SMTP_HOST,
+          port: Number(process.env.SMTP_PORT) || 587,
+          secure: Number(process.env.SMTP_PORT) === 465,
+          auth: process.env.SMTP_USER
+            ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+            : undefined,
+        },
       })
     : undefined,
   plugins: [

@@ -82,7 +82,7 @@ a team alert (to _Site Settings → Website request recipient_) and a confirmati
 
 Spam protection: honeypot field, minimum fill time, max 3 requests per email per hour, and
 Cloudflare Turnstile when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` are set
-(**required in production**). Without `RESEND_API_KEY`, emails are printed to the dev server console.
+(**required in production**). Without `SMTP_HOST`, emails are printed to the dev server console.
 
 ## Seeding content
 
@@ -114,7 +114,8 @@ yarn media:upload
    `S3_SECRET_ACCESS_KEY`, and `NOINDEX=true` (keeps the preview out of search engines).
 3. Run `yarn media:upload` locally once so existing images are in the bucket, then deploy.
 
-Optional: `RESEND_API_KEY` + `EMAIL_FROM` (emails) and the Turnstile keys (spam protection).
+Optional: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` + `EMAIL_FROM` (emails, sent with
+Nodemailer; `EMAIL_FROM` must be the SMTP mailbox) and the Turnstile keys (spam protection).
 
 ## Database changes
 
