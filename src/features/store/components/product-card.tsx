@@ -6,6 +6,7 @@ import { formatPrice } from '@/lib/format'
 
 import type { StoreProduct } from '../catalog'
 import { productHref } from '../links'
+import { StockStatus } from './stock-status'
 
 export const cardStyles =
   'flex h-full flex-col rounded-xl border border-ink-200 bg-white p-5 on-dark:border-white/10 on-dark:bg-white/[0.03]'
@@ -34,6 +35,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
 
       <div className="mt-auto pt-6">
         <Price product={product} />
+        {product.stock && <StockStatus stock={product.stock} className="mt-2" />}
         <ButtonLink href={`${href}#quote`} variant="outline" className="relative z-10 mt-4 w-full">
           Request a Quote
         </ButtonLink>

@@ -32,3 +32,12 @@ export type PriceOption = {
 }
 
 export type ProductPage = { total: number; products: ProductSummary[] }
+
+/** Hardware stock at the distributor. Browser-safe. "direct" ships from the manufacturer. */
+export type Stock = {
+  status: 'in-stock' | 'out-of-stock' | 'direct' | 'digital'
+  /** Units in the distributor's warehouses (0 for direct and digital). */
+  quantity: number
+  /** Earliest expected restock date (YYYY-MM-DD), if the distributor has one. */
+  expected: string | null
+}

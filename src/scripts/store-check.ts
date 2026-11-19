@@ -1,4 +1,5 @@
 // Smoke test for the store's distributor connections (read-only). Run: yarn store:check
+import { stockSummary } from '@/features/store/stock'
 import { ingram, pax8 } from '@/features/store/vendors'
 
 const money = (n: number | null | undefined) => (n == null ? '—' : `$${n.toFixed(2)}`)
@@ -23,14 +24,17 @@ for (const round of [1, 2]) {
   const laptops = await timed('Ingram catalog page', () =>
     ingram.catalogPage({ category: 'Computer Systems', keyword: 'laptop' }),
   )
-  const costs = await timed('Ingram costs', () => ingram.costs(laptops.products.map((p) => p.id)))
+  const found = await timed('Ingram price and stock', () =>
+    ingram.priceAndStock(laptops.products.map((p) => p.id)),
+  )
   if (round === 1) {
     console.log(
       `  "Computer Systems" + "laptop": ${laptops.products.length} current of 50 on page 1:`,
     )
     for (const p of laptops.products.slice(0, 5)) {
+      const { cost, stock } = found.get(p.id) ?? {}
       console.log(
-        `   - ${p.id} | ${p.brand} | ${p.partNumber} | ${p.name.slice(0, 60)} | cost ${money(costs.get(p.id))}`,
+        `   - ${p.id} | ${p.brand} | ${p.name.slice(0, 50)} | cost ${money(cost)} | ${stock ? stockSummary(stock) : 'stock unknown'}`,
       )
     }
   }

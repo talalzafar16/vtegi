@@ -10,6 +10,7 @@ import { Section } from '@/components/ui/section'
 import { Heading } from '@/components/ui/typography'
 import { getProduct, productOffers, splitName } from '@/features/store/catalog'
 import { tabLabels } from '@/features/store/components/category-nav'
+import { StockStatus } from '@/features/store/components/stock-status'
 import { categoryHref } from '@/features/store/links'
 import { QuoteForm } from '@/features/store/quote/quote-form'
 import type { VendorId } from '@/features/store/vendors'
@@ -74,7 +75,7 @@ export default async function ProductPage({ params }: Props) {
   }
 
   const { product, category } = found
-  const { offers, customFrom } = await productOffers(product)
+  const { offers, customFrom, stock } = await productOffers(product)
   const { title, highlights } = splitName(product)
   const tab = product.vendor === 'ingram' ? 'hardware' : 'software'
 
@@ -120,6 +121,7 @@ export default async function ProductPage({ params }: Props) {
           {product.partNumber && (
             <p className="mt-4 font-mono text-sm text-ink-500">Part # {product.partNumber}</p>
           )}
+          {stock && <StockStatus stock={stock} detailed className="mt-3" />}
         </header>
 
         <aside
@@ -132,7 +134,9 @@ export default async function ProductPage({ params }: Props) {
               Request a quote
             </Heading>
             <p className="mt-1 mb-6 text-sm text-ink-600 on-dark:text-ink-400">
-              Prices include volume discounts and can change; your quote uses the latest price.
+              {stock?.status === 'out-of-stock'
+                ? "This product is out of stock right now. Send your request and we'll contact you when it's available."
+                : 'Prices include volume discounts and can change; your quote uses the latest price.'}
             </p>
             <QuoteForm
               vendor={product.vendor}

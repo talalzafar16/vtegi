@@ -98,6 +98,32 @@ export const QuoteRequests: CollectionConfig = {
       admin: { condition: (data) => data?.product?.vendor === 'pax8' },
     },
     {
+      type: 'row',
+      fields: [
+        {
+          name: 'stockAtRequest',
+          label: 'Stock at request',
+          type: 'text',
+          admin: {
+            readOnly: true,
+            description: "Ingram Micro's stock when the customer asked.",
+            condition: (data) => Boolean(data?.stockAtRequest),
+          },
+        },
+        {
+          name: 'restockExpected',
+          label: 'Expected restock',
+          type: 'date',
+          admin: {
+            readOnly: true,
+            description: "Ingram Micro's date for new stock, if it had one.",
+            date: { pickerAppearance: 'dayOnly', displayFormat: 'MMM d, yyyy' },
+            condition: (data) => Boolean(data?.restockExpected),
+          },
+        },
+      ],
+    },
+    {
       name: 'price',
       label: 'Price quoted',
       type: 'group',

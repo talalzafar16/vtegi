@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { ArrowRight, CheckCircle2, Loader2, Lock } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Clock, Loader2, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { useForm, useWatch, type FieldPath } from 'react-hook-form'
@@ -379,18 +379,31 @@ function Success({
 }) {
   const heading = useRef<HTMLHeadingElement>(null)
   useEffect(() => heading.current?.focus(), [])
-  const sent = result.status === 'sent'
+  const reference = result.quoteNumber ? ` (${result.quoteNumber})` : ''
+  const message = {
+    sent: {
+      title: 'Your quote is on its way.',
+      text: `We’re emailing quote ${result.quoteNumber} to ${result.email} as a PDF. It usually arrives within a minute; reply to it to place your order.`,
+    },
+    manual: {
+      title: 'We’re preparing your quote.',
+      text: `A VTEGI specialist will email your quote${reference} within one business day.`,
+    },
+    'out-of-stock': {
+      title: 'This product isn’t available right now.',
+      text: `We’ve saved your request${reference} and will contact you at ${result.email} as soon as it’s available.`,
+    },
+  }[result.status]
+  const StatusIcon = result.status === 'out-of-stock' ? Clock : CheckCircle2
 
   return (
     <div role="status" className="py-6 text-center">
-      <CheckCircle2 aria-hidden className="mx-auto size-12 text-brand-700 on-dark:text-brand-400" />
+      <StatusIcon aria-hidden className="mx-auto size-12 text-brand-700 on-dark:text-brand-400" />
       <Heading ref={heading} tabIndex={-1} as="h3" size="md" className="mt-5 outline-none">
-        {sent ? 'Your quote is on its way.' : 'We’re preparing your quote.'}
+        {message.title}
       </Heading>
       <p className="mx-auto mt-3 max-w-sm text-sm text-ink-600 on-dark:text-ink-400">
-        {sent
-          ? `We’re emailing quote ${result.quoteNumber} to ${result.email} as a PDF. It usually arrives within a minute; reply to it to place your order.`
-          : `A VTEGI specialist will email your quote${result.quoteNumber ? ` (${result.quoteNumber})` : ''} within one business day.`}
+        {message.text}
       </p>
       <Button variant="outline" className="mt-8" onClick={onReset}>
         Request another quote

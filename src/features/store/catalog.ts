@@ -10,12 +10,15 @@ import {
   type PriceLevel,
 } from './pricing'
 import { getStoreSettings } from './settings'
+import { hasEnough } from './stock'
 import {
   ingram,
   pax8,
+  type PriceAndStock,
   type PriceOption,
   type ProductDetail,
   type ProductSummary,
+  type Stock,
   type VendorId,
 } from './vendors'
 
@@ -29,6 +32,8 @@ export type StoreProduct = ProductSummary & {
   price: number | null
   priceSuffix?: string
   priceFrom?: boolean
+  /** Hardware only; null when unknown. */
+  stock?: Stock | null
   icon: Category['icon']
 }
 
@@ -103,24 +108,29 @@ async function mapLimit<T, R>(items: T[], limit: number, task: (item: T) => Prom
 
 type IconOf = (product: ProductSummary) => Category['icon']
 
-// Prices are a bonus on listings: if they fail, products still show with "Request a Quote".
+// Prices and stock are a bonus on listings: if they fail, products still show with "Request a Quote".
+// Stock shows even when Terry hides prices.
 async function withHardwarePrices(items: ProductSummary[], settings: Settings, iconOf: IconOf) {
-  let costs = new Map<string, number | null>()
-  if (settings.showPrices && items.length > 0) {
+  let found = new Map<string, PriceAndStock>()
+  if (items.length > 0) {
     try {
-      costs = await ingram.costs(items.map((p) => p.id))
+      found = await ingram.priceAndStock(items.map((p) => p.id))
     } catch (error) {
       console.error('[store] Ingram prices failed:', error)
     }
   }
-  return items.map((product): StoreProduct => ({
-    ...product,
-    icon: iconOf(product),
-    price: settings.showPrices
-      ? (calculatePrice(costs.get(product.id), 1, settings.rules)?.unitPrice ?? null)
-      : null,
-    priceSuffix: 'per unit',
-  }))
+  return items.map((product): StoreProduct => {
+    const { cost = null, stock = null } = found.get(product.id) ?? {}
+    return {
+      ...product,
+      icon: iconOf(product),
+      price: settings.showPrices
+        ? (calculatePrice(cost, 1, settings.rules)?.unitPrice ?? null)
+        : null,
+      priceSuffix: 'per unit',
+      stock,
+    }
+  })
 }
 
 function withSoftwarePrices(items: ProductSummary[], settings: Settings, iconOf: IconOf) {
@@ -342,7 +352,7 @@ const byTerm = (a: PriceOption, b: PriceOption) =>
   (termMonths(a) ?? 0) - (termMonths(b) ?? 0) ||
   Number(a.billingTerm === 'annual') - Number(b.billingTerm === 'annual')
 
-/** The ways to buy a product with their price tables (cached distributor prices). */
+/** The ways to buy a product with their price tables, plus hardware stock (cached data). */
 export async function productOffers(product: ProductSummary) {
   const settings = await getStoreSettings()
   const rules = settings.showPrices ? settings.rules : null
@@ -351,13 +361,11 @@ export async function productOffers(product: ProductSummary) {
     rules ? priceLevels(costAt, rules) : []
 
   if (product.vendor === 'ingram') {
-    let cost: number | null = null
-    if (rules) {
-      try {
-        cost = (await ingram.costs([product.id])).get(product.id) ?? null
-      } catch (error) {
-        console.error('[store] Ingram price failed:', product.id, error)
-      }
+    let found: PriceAndStock | undefined
+    try {
+      found = (await ingram.priceAndStock([product.id])).get(product.id)
+    } catch (error) {
+      console.error('[store] Ingram price failed:', product.id, error)
     }
     const offer: Offer = {
       key: HARDWARE_OFFER,
@@ -366,9 +374,9 @@ export async function productOffers(product: ProductSummary) {
       months: null,
       periods: 1,
       unit: 'unit',
-      levels: levelsFor(() => cost),
+      levels: levelsFor(() => found?.cost ?? null),
     }
-    return { offers: [offer], customFrom }
+    return { offers: [offer], customFrom, stock: found?.stock ?? null }
   }
 
   let options: PriceOption[] = []
@@ -386,16 +394,19 @@ export async function productOffers(product: ProductSummary) {
     unit: option.unit,
     levels: levelsFor((quantity) => tierCost(option, quantity)),
   }))
-  return { offers, customFrom }
+  return { offers, customFrom, stock: null }
 }
 
 export type QuotePricing = {
   term: { billingTerm: PriceOption['billingTerm']; label: string; months: number | null } | null
   price: PriceBreakdown | null
-  manualReason: 'no-price' | 'volume' | 'unavailable' | null
+  /** Hardware stock at the time of the quote; null for software or when unknown. */
+  stock: Stock | null
+  manualReason: 'no-price' | 'volume' | 'unavailable' | 'out-of-stock' | null
 }
 
-/** The price for a quote, always fresh from the distributor (never the display cache). */
+/** Price and stock for a quote, always fresh from the distributor (never the display cache).
+ * Not enough stock for the whole quantity makes it a manual (out of stock) request. */
 export async function quotePricing(
   product: ProductSummary,
   offer: string,
@@ -403,20 +414,29 @@ export async function quotePricing(
 ): Promise<QuotePricing> {
   const { rules } = await getStoreSettings()
 
-  const priced = (option: PriceOption | null, cost: number | null): QuotePricing => {
+  const priced = (
+    option: PriceOption | null,
+    cost: number | null,
+    stock: Stock | null = null,
+  ): QuotePricing => {
     const term = option
       ? { billingTerm: option.billingTerm, label: option.label, months: termMonths(option) }
       : null
-    if (needsCustomPricing(quantity, rules)) return { term, price: null, manualReason: 'volume' }
+    if (!hasEnough(stock, quantity)) {
+      return { term, price: null, stock, manualReason: 'out-of-stock' }
+    }
+    if (needsCustomPricing(quantity, rules)) {
+      return { term, price: null, stock, manualReason: 'volume' }
+    }
     const periods = option ? billingPeriods(option.billingTerm, option.commitmentMonths) : 1
     const price = calculatePrice(cost, quantity, rules, periods)
-    return { term, price, manualReason: price ? null : 'no-price' }
+    return { term, price, stock, manualReason: price ? null : 'no-price' }
   }
 
   try {
     if (product.vendor === 'ingram') {
-      const costs = await ingram.costs([product.id], { fresh: true })
-      return priced(null, costs.get(product.id) ?? null)
+      const found = (await ingram.priceAndStock([product.id], { fresh: true })).get(product.id)
+      return priced(null, found?.cost ?? null, found?.stock ?? null)
     }
     const options = await pax8.priceOptions(product.id, { fresh: true })
     const option =
@@ -424,6 +444,6 @@ export async function quotePricing(
     return priced(option, option ? tierCost(option, quantity) : null)
   } catch (error) {
     console.error('[store] Quote price failed:', product.vendor, product.id, error)
-    return { term: null, price: null, manualReason: 'unavailable' }
+    return { term: null, price: null, stock: null, manualReason: 'unavailable' }
   }
 }

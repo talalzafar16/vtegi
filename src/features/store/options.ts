@@ -24,4 +24,5 @@ export const manualReasons = [
   { label: 'Custom volume pricing', value: 'volume' },
   { label: 'Distributor unavailable', value: 'unavailable' },
   { label: 'Quote email failed', value: 'email-failed' },
+  { label: 'Out of stock', value: 'out-of-stock' },
 ] as const

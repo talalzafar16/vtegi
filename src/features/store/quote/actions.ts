@@ -10,11 +10,12 @@ import { verifyTurnstile } from '@/lib/turnstile'
 import type { QuoteRequest } from '@/payload-types'
 
 import { getProduct, quotePricing } from '../catalog'
+import { stockSummary } from '../stock'
 import { deliverQuote } from './deliver'
 import { quoteSchema, type QuoteInput } from './schema'
 
 export type QuoteResult =
-  | { ok: true; status: 'sent' | 'manual'; quoteNumber: string }
+  | { ok: true; status: 'sent' | 'manual' | 'out-of-stock'; quoteNumber: string }
   | { ok: false; message: string; fieldErrors?: Partial<Record<keyof QuoteInput, string[]>> }
 
 const MIN_FILL_MS = 3000 // people take longer than this; many bots don't
@@ -84,6 +85,11 @@ export async function submitQuote(
       brand: product.brand || undefined,
     },
     quantity: data.quantity,
+    stockAtRequest: pricing.stock ? stockSummary(pricing.stock) : undefined,
+    // Noon UTC keeps the same calendar day in every US time zone.
+    restockExpected: pricing.stock?.expected
+      ? `${pricing.stock.expected}T12:00:00.000Z`
+      : undefined,
     billingTerm: pricing.term?.billingTerm,
     termMonths: pricing.term?.months ?? undefined,
     termLabel: pricing.term?.label,
@@ -120,7 +126,12 @@ export async function submitQuote(
 
   return {
     ok: true,
-    status: quote.status === 'sent' ? 'sent' : 'manual',
+    status:
+      quote.status === 'sent'
+        ? 'sent'
+        : quote.manualReason === 'out-of-stock'
+          ? 'out-of-stock'
+          : 'manual',
     quoteNumber: quote.quoteNumber ?? '',
   }
 }

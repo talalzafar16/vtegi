@@ -1,6 +1,6 @@
 import { labelOf } from '@/lib/utils'
 import { emailButton, emailLayout, emailRows, emailText, escapeHtml } from '@/lib/email'
-import { formatPrice } from '@/lib/format'
+import { formatDate, formatPrice } from '@/lib/format'
 import type { QuoteRequest } from '@/payload-types'
 
 import { organizationTypes } from '@/features/request-form/options'
@@ -17,6 +17,12 @@ const productRows = (quote: QuoteRequest): [string, string | null | undefined][]
   ['Part number', quote.product.partNumber],
   ['Term', quote.termLabel],
   ['Quantity', String(quote.quantity)],
+]
+
+/** Internal only: stock when the customer asked. */
+const stockRows = (quote: QuoteRequest): [string, string | null | undefined][] => [
+  ['Stock at request', quote.stockAtRequest],
+  ['Expected restock', quote.restockExpected ? formatDate(quote.restockExpected) : undefined],
 ]
 
 const customerRows = (quote: QuoteRequest): [string, string | null | undefined][] => [
@@ -56,6 +62,7 @@ export function quoteEmail(quote: QuoteRequest, doc: QuoteDocument) {
 
 /** To the customer when the request needs a manual quote. */
 export function pendingEmail(quote: QuoteRequest) {
+  if (quote.manualReason === 'out-of-stock') return outOfStockEmail(quote)
   const volume = quote.manualReason === 'volume'
   return {
     subject: `We're preparing your quote ${quote.quoteNumber} | VTEGI`,
@@ -69,6 +76,24 @@ export function pendingEmail(quote: QuoteRequest) {
     ),
   }
 }
+
+function outOfStockEmail(quote: QuoteRequest) {
+  return {
+    subject: `We've saved your request ${quote.quoteNumber} | VTEGI`,
+    html: emailLayout(
+      `Thanks, ${escapeHtml(quote.name)}. This product isn't available right now.`,
+      emailText(
+        "Our distributor doesn't have enough stock for your order at the moment. We've saved your request, and a VTEGI specialist will contact you as soon as it's available.",
+      ) + emailRows([['Reference', quote.quoteNumber], ...productRows(quote)]),
+    ),
+  }
+}
+
+/** What the customer was told, for VTEGI's alert. */
+const toldCustomer = (quote: QuoteRequest) =>
+  quote.manualReason === 'out-of-stock'
+    ? "The customer was told it isn't available right now and that we'll contact them when it is."
+    : 'On the website the customer was told a specialist will email the quote within one business day.'
 
 /** To VTEGI: a copy of a quote that was sent automatically (internal, includes cost and markup). */
 export function quoteCopyEmail(quote: QuoteRequest, adminUrl: string) {
@@ -85,6 +110,7 @@ export function quoteCopyEmail(quote: QuoteRequest, adminUrl: string) {
         ['Discount', price?.discountPercent ? `${price.discountPercent}%` : undefined],
         ['Final unit price', money(price?.unitPrice)],
         ['Total', money(price?.total)],
+        ...stockRows(quote),
         ...customerRows(quote),
       ]) + emailButton(adminUrl, 'Open in admin'),
     ),
@@ -102,12 +128,13 @@ export function manualQuoteEmail(quote: QuoteRequest, adminUrl: string) {
           quote.manualReason === 'email-failed'
             ? 'The quote could not be emailed to the customer, so please send it yourself.'
             : ''
-        } On the website the customer was told a specialist will email the quote within one business day.`,
+        } ${toldCustomer(quote)}`,
       ) +
         emailRows([
           ...productRows(quote),
           ['Distributor', labelOf(vendors, quote.product.vendor)],
           ['Distributor ID', quote.product.vendorProductId],
+          ...stockRows(quote),
           ['Email problem', quote.emailError],
           ...customerRows(quote),
         ]) +

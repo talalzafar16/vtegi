@@ -698,6 +698,14 @@ export interface QuoteRequest {
   termMonths?: number | null;
   termLabel?: string | null;
   /**
+   * Ingram Micro's stock when the customer asked.
+   */
+  stockAtRequest?: string | null;
+  /**
+   * Ingram Micro's date for new stock, if it had one.
+   */
+  restockExpected?: string | null;
+  /**
    * Empty when no price was available. The request then needs a manual quote.
    */
   price?: {
@@ -718,7 +726,7 @@ export interface QuoteRequest {
   notes?: string | null;
   quoteNumber?: string | null;
   status: 'sent' | 'manual' | 'quoted';
-  manualReason?: ('no-price' | 'volume' | 'unavailable' | 'email-failed') | null;
+  manualReason?: ('no-price' | 'volume' | 'unavailable' | 'email-failed' | 'out-of-stock') | null;
   /**
    * When the customer was sent their quote, or the "preparing your quote" note.
    */
@@ -1174,6 +1182,8 @@ export interface QuoteRequestsSelect<T extends boolean = true> {
   billingTerm?: T;
   termMonths?: T;
   termLabel?: T;
+  stockAtRequest?: T;
+  restockExpected?: T;
   price?:
     | T
     | {

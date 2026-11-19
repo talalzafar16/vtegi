@@ -2,4 +2,12 @@
 export * as ingram from './ingram'
 export * as pax8 from './pax8'
 export { VendorError } from './http'
-export type { PriceOption, ProductDetail, ProductPage, ProductSummary, VendorId } from './types'
+export type { PriceAndStock } from './ingram'
+export type {
+  PriceOption,
+  ProductDetail,
+  ProductPage,
+  ProductSummary,
+  Stock,
+  VendorId,
+} from './types'

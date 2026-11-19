@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 
 import { cached, cachedPrices, cachedStale, refreshAt, remove } from '../cache'
 import { VendorError, vendorFetch } from './http'
-import type { ProductDetail, ProductPage, ProductSummary } from './types'
+import type { ProductDetail, ProductPage, ProductSummary, Stock } from './types'
 
 // Ingram Micro Reseller API v6 (hardware). Read-only: catalog search and price & availability.
 
@@ -197,34 +197,80 @@ export function product(partNumber: string) {
   )
 }
 
-type PriceRow = { ingramPartNumber?: string; pricing?: { customerPrice?: number } }
+type PriceRow = {
+  ingramPartNumber?: string
+  productClass?: string
+  pricing?: { customerPrice?: number }
+  availability?: {
+    totalAvailability?: number
+    availabilityByWarehouse?: {
+      quantityBackorderedEta?: string
+      backOrderInfo?: { etaDate?: string }[]
+    }[]
+    preOrderETAOnOrderQty?: { eta?: string }[]
+  }
+}
 
-/** Ingram's price call, up to 50 parts at a time. Null when Ingram has no price for a part. */
-async function loadCosts(partNumbers: string[]) {
-  const result = new Map<string, number | null>()
+/** VTEGI's cost (server only) and Ingram's stock for one part; null when Ingram has none. */
+export type PriceAndStock = { cost: number | null; stock: Stock | null }
+
+/** Ingram reports digital products (licenses, warranties) as 9,999,999 units. */
+const UNLIMITED = 9_999_999
+
+/** Earliest restock date still ahead; Ingram keeps some dates that have passed. */
+function nextRestock(availability: NonNullable<PriceRow['availability']>) {
+  const today = new Date().toISOString().slice(0, 10)
+  const dates = [
+    ...(availability.availabilityByWarehouse ?? []).flatMap((warehouse) => [
+      warehouse.quantityBackorderedEta,
+      ...(warehouse.backOrderInfo ?? []).map((info) => info.etaDate),
+    ]),
+    ...(availability.preOrderETAOnOrderQty ?? []).map((order) => order.eta),
+  ]
+    .map((date) => date?.slice(0, 10) ?? '')
+    .filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date) && date > today)
+  return dates.sort()[0] ?? null
+}
+
+function stockOf(row: PriceRow): Stock | null {
+  const total = row.availability?.totalAvailability
+  if (!row.availability || typeof total !== 'number') return null
+  if (total >= UNLIMITED) return { status: 'digital', quantity: 0, expected: null }
+  const expected = nextRestock(row.availability)
+  if (total > 0) return { status: 'in-stock', quantity: total, expected }
+  // Class X ships from the manufacturer, so Ingram never holds it in stock.
+  if (row.productClass === 'X') return { status: 'direct', quantity: 0, expected: null }
+  return { status: 'out-of-stock', quantity: 0, expected }
+}
+
+/** Ingram's price and availability call, up to 50 parts at a time. */
+async function loadPriceAndStock(partNumbers: string[]) {
+  const result = new Map<string, PriceAndStock>()
   for (let i = 0; i < partNumbers.length; i += 50) {
     const chunk = partNumbers.slice(i, i + 50)
     const rows = await ingram<PriceRow[]>(
-      '/catalog/priceandavailability?includeAvailability=false&includePricing=true',
+      '/catalog/priceandavailability?includeAvailability=true&includePricing=true',
       {
         method: 'POST',
         body: JSON.stringify({ products: chunk.map((ingramPartNumber) => ({ ingramPartNumber })) }),
       },
     )
-    const found = new Map(
-      (rows ?? []).map((row) => [row.ingramPartNumber, row.pricing?.customerPrice]),
-    )
+    const found = new Map((rows ?? []).map((row) => [row.ingramPartNumber, row]))
     for (const pn of chunk) {
-      const cost = found.get(pn)
-      result.set(pn, typeof cost === 'number' && cost > 0 ? cost : null)
+      const row = found.get(pn)
+      const cost = row?.pricing?.customerPrice
+      result.set(pn, {
+        cost: typeof cost === 'number' && cost > 0 ? cost : null,
+        stock: row ? stockOf(row) : null,
+      })
     }
   }
   return result
 }
 
-/** VTEGI's cost per part number, refreshed every 2 hours; `fresh` asks Ingram now (quotes). */
-export function costs(partNumbers: string[], { fresh = false } = {}) {
+/** Cost and stock per part number, refreshed every 2 hours; `fresh` asks Ingram now (quotes). */
+export function priceAndStock(partNumbers: string[], { fresh = false } = {}) {
   const unique = [...new Set(partNumbers)]
-  if (fresh) return loadCosts(unique)
-  return cachedPrices(unique, (pn) => key(`cost:${pn}`), loadCosts)
+  if (fresh) return loadPriceAndStock(unique)
+  return cachedPrices(unique, (pn) => key(`price:${pn}`), loadPriceAndStock)
 }
