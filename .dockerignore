@@ -1,0 +1,14 @@
+.git
+.next
+node_modules
+media
+pgdata
+.env
+.env.*
+!.env.example
+*.docx
+*.log
+.vercel
+coverage
+Dockerfile
+docker-compose.yml

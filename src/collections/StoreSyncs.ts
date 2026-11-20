@@ -54,7 +54,7 @@ export const StoreSyncs: CollectionConfig = {
       name: 'startedBy',
       type: 'relationship',
       relationTo: 'users',
-      admin: { description: 'Empty when run from the command line (yarn store:sync).' },
+      admin: { description: 'Empty when run from the command line (pnpm store:sync).' },
     },
     { name: 'finishedAt', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
     { name: 'summary', type: 'text' },

@@ -36,7 +36,6 @@ import { DashboardWelcome as DashboardWelcome_d23f6d4ecf5a7c986033273b1c1aafc1 }
 import { NavSiteLink as NavSiteLink_47968aa3e19ca77960af77c26e4e785d } from '../../../components/admin/site-links'
 import { AdminFonts as AdminFonts_1dab06ce10d6fd1812a7260c7c8d2b83 } from '../../../components/admin/admin-fonts'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
-import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 /** @type import('payload').ImportMap */
 export const importMap = {
@@ -77,6 +76,5 @@ export const importMap = {
   "/components/admin/dashboard-welcome#DashboardWelcome": DashboardWelcome_d23f6d4ecf5a7c986033273b1c1aafc1,
   "/components/admin/site-links#NavSiteLink": NavSiteLink_47968aa3e19ca77960af77c26e4e785d,
   "/components/admin/admin-fonts#AdminFonts": AdminFonts_1dab06ce10d6fd1812a7260c7c8d2b83,
-  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
-  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

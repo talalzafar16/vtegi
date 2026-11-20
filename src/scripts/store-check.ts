@@ -1,4 +1,4 @@
-// Smoke test for the store's distributor connections (read-only). Run: yarn store:check
+// Smoke test for the store's distributor connections (read-only). Run: pnpm store:check
 import { stockSummary } from '@/features/store/stock'
 import { ingram, pax8 } from '@/features/store/vendors'
 

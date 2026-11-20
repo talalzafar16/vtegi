@@ -6,30 +6,29 @@ Marketing website and CMS for Virtual Technology Enterprise Group Inc.
 
 ## Getting started
 
-Requirements: Node 20+, Yarn 1, a Supabase project (Postgres).
+Requirements: Node 20+, pnpm, Docker.
 
 ```bash
-cp .env.example .env      # set DATABASE_URL (Supabase) and PAYLOAD_SECRET (others optional in dev)
-yarn                      # install dependencies
-yarn dev                  # http://localhost:3000
+cp .env.example .env                  # set POSTGRES_PASSWORD and PAYLOAD_SECRET (others optional in dev)
+docker compose up -d postgres         # local database
+pnpm install                          # install dependencies
+pnpm dev                              # creates the tables; http://localhost:3000
+pnpm seed                             # optional: real VTEGI content
 ```
 
 Open http://localhost:3000/admin and create the first user. It automatically becomes an **Admin**.
-
-> **Supabase note:** Payload talks to Postgres directly; we don't use Supabase's auto-generated REST API.
-> Turn it off (Supabase → Project Settings → Data API) so Payload's tables are never exposed through it.
 
 ## Scripts
 
 | Script                 | Purpose                                                |
 | ---------------------- | ------------------------------------------------------ |
-| `yarn dev`             | Start the dev server                                   |
-| `yarn build` / `start` | Production build / serve                               |
-| `yarn lint`            | ESLint                                                 |
-| `yarn typecheck`       | TypeScript check                                       |
-| `yarn format`          | Prettier (sorts Tailwind classes too)                  |
-| `yarn generate:types`  | Regenerate `src/payload-types.ts` after schema changes |
-| `yarn seed`            | Load real VTEGI content (safe to re-run)               |
+| `pnpm dev`             | Start the dev server                                   |
+| `pnpm build` / `start` | Production build / serve                               |
+| `pnpm lint`            | ESLint                                                 |
+| `pnpm typecheck`       | TypeScript check                                       |
+| `pnpm format`          | Prettier (sorts Tailwind classes too)                  |
+| `pnpm generate:types`  | Regenerate `src/payload-types.ts` after schema changes |
+| `pnpm seed`            | Load real VTEGI content (safe to re-run)               |
 
 ## Project structure
 
@@ -87,7 +86,7 @@ Cloudflare Turnstile when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_K
 ## Seeding content
 
 ```bash
-yarn seed
+pnpm seed
 ```
 
 Loads real VTEGI content (site settings, solutions, capabilities, partners with logos).
@@ -95,37 +94,109 @@ Safe to re-run: it only creates what is missing and never overwrites admin edits
 
 ## Uploads (images and PDFs)
 
-When the `S3_*` variables are set, uploads are stored in **Supabase Storage** (S3 protocol);
-otherwise in the local `/media` folder (git-ignored). Files are always served through Payload
-(`/api/media/file/...`), so the bucket can stay private.
+Uploads are stored in the local `/media` folder (git-ignored; on the VPS `./media`, mounted into the
+app) and served through Payload at `/api/media/file/...`.
 
-To copy existing local uploads to the bucket (one time), add the `S3_*` variables to `.env`, then:
+## Deploying on the VPS (Docker)
+
+**Caddy** runs on the server itself (HTTPS, the only thing open to the internet) and forwards to
+the app on `localhost:3000`. `docker-compose.yml` runs the **app**, **Postgres** and **Redis**
+(cache), none reachable from outside. Data lives next to the code: database in `./pgdata`,
+uploads in `./media` (both git-ignored). Never delete the project folder or run `git clean -x`
+on the server: that deletes the database and images.
+
+### 1. Prepare the server (once)
 
 ```bash
-yarn media:upload
+# 2 GB swap as a safety net
+sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+# Firewall: SSH, HTTP and HTTPS only
+sudo ufw allow OpenSSH && sudo ufw allow 80 && sudo ufw allow 443 && sudo ufw enable
+# Docker (log out and back in afterwards)
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER
+# Caddy (runs as a service and starts on boot)
+sudo apt install --yes debian-keyring debian-archive-keyring apt-transport-https curl
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update && sudo apt install caddy
 ```
 
-## Deploying to Vercel (preview)
+### 2. Code and settings
 
-1. **Supabase Storage:** create a private bucket, then create S3 access keys
-   (Project Settings → Storage → S3 Connection).
-2. **Vercel:** import the GitHub repo and add these environment variables:
-   `DATABASE_URL`, `PAYLOAD_SECRET`, `S3_BUCKET`, `S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`,
-   `S3_SECRET_ACCESS_KEY`, and `NOINDEX=true` (keeps the preview out of search engines).
-3. Run `yarn media:upload` locally once so existing images are in the bucket, then deploy.
+```bash
+git clone <repo-url> vtegi && cd vtegi
+cp .env.example .env && nano .env
+```
 
-Optional: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` + `EMAIL_FROM` (emails, sent with
-Nodemailer; `EMAIL_FROM` must be the SMTP mailbox) and the Turnstile keys (spam protection).
+In `.env` on the server:
+
+- `POSTGRES_USER`, `POSTGRES_DB` (e.g. `vtegi`) and `POSTGRES_PASSWORD` (`openssl rand -hex 24`).
+  They are used once, when the database is first created.
+- `PAYLOAD_SECRET`: a long random value (`openssl rand -hex 32`)
+- `NOINDEX=true` while testing on `new.vtegi.com`
+- SMTP, Turnstile, Ingram and Pax8 keys as in `.env.example`
+
+### 3. First start (empty database)
+
+Tables and content come first, because the build renders pages from the database.
+
+```bash
+docker compose up -d postgres
+docker compose run --rm tools pnpm payload migrate   # create the tables
+docker compose run --rm tools pnpm seed              # site content
+docker compose run --rm tools pnpm store:sync        # distributor names (a few minutes)
+docker compose run --rm tools pnpm store:seed        # store categories
+docker compose up -d --build                         # build and start the website
+```
+
+Then open `/admin`, create the first user (it becomes Admin) and fill in **Store Settings**
+(markup, discounts, quote notifications email, salesperson, first quote number).
+
+### 4. HTTPS with Caddy
+
+Point `new.vtegi.com` (DNS A record) to the server's IP, put this in `/etc/caddy/Caddyfile` and run
+`sudo systemctl reload caddy`. Caddy gets the certificate by itself.
+
+```
+new.vtegi.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}
+```
+
+**Going live:** point `vtegi.com` and `www` to the server, replace the Caddyfile with the block
+below and reload Caddy, clear `NOINDEX`, then `docker compose up -d --build app` (static pages read
+`NOINDEX` at build time).
+
+```
+www.vtegi.com {
+	redir https://vtegi.com{uri} permanent
+}
+
+vtegi.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000
+}
+```
+
+**Updates:** `git pull && docker compose up -d --build app` (new migrations run during the build).
+**Logs:** `docker compose logs -f app` and `journalctl -u caddy -f`.
+**Database access:** `ssh -L 5432:127.0.0.1:5432 <user>@<server-ip>`, then connect a database client to `localhost:5432`.
 
 ## Database changes
 
-In development, Payload syncs the schema to the database automatically (use a dev Supabase project, not production).
-For staging/production, create and run migrations:
+In development, Payload syncs the schema to the database automatically. Before deploying a schema
+change, create a migration and commit it; the VPS runs it during the next build:
 
 ```bash
-yarn payload migrate:create
-yarn payload migrate
+pnpm payload migrate:create <name>
 ```
+
+Never point `pnpm dev` at the production database: a database changed by dev mode stops
+migrations from running.
 
 ## Roles
 

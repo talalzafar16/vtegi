@@ -1,4 +1,4 @@
-// Refreshes Distributor Lists (the Store Categories dropdowns) and prints a report. Run: yarn store:sync
+// Refreshes Distributor Lists (the Store Categories dropdowns) and prints a report. Run: pnpm store:sync
 // Same sync as the admin's "Sync now" button; the run is recorded in Sync History.
 import { getPayload } from 'payload'
 

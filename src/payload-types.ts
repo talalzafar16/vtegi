@@ -750,7 +750,7 @@ export interface StoreSync {
   id: number;
   status: 'running' | 'success' | 'failed';
   /**
-   * Empty when run from the command line (yarn store:sync).
+   * Empty when run from the command line (pnpm store:sync).
    */
   startedBy?: (number | null) | User;
   finishedAt?: string | null;

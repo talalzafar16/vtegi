@@ -1,5 +1,5 @@
 // Creates Terry's 9 starter categories with drafted mappings; never changes existing ones.
-// Run `yarn store:sync` first so the distributor names exist. Run: yarn store:seed
+// Run `pnpm store:sync` first so the distributor names exist. Run: pnpm store:seed
 import config from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 
@@ -359,7 +359,7 @@ for (const seed of seeds) {
 
 if (missing.size > 0) {
   console.log(
-    `\nNot found in Distributor Lists (skipped; run yarn store:sync):\n  ${[...missing].join('\n  ')}`,
+    `\nNot found in Distributor Lists (skipped; run pnpm store:sync):\n  ${[...missing].join('\n  ')}`,
   )
 }
 process.exit(0)

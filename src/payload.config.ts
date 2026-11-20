@@ -2,7 +2,6 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import { buildConfig, type CollectionConfig, type GlobalConfig } from 'payload'
 import sharp from 'sharp'
@@ -26,7 +25,6 @@ import { AboutPage } from './globals/AboutPage'
 import { HomePage } from './globals/HomePage'
 import { SiteSettings } from './globals/SiteSettings'
 import { StoreSettings } from './globals/StoreSettings'
-import { s3Bucket, s3ClientConfig } from './lib/s3'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -83,8 +81,13 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    // Postgres from docker-compose. POSTGRES_HOST is "postgres" inside Docker, localhost otherwise.
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      host: process.env.POSTGRES_HOST || 'localhost',
+      port: 5432,
+      user: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
     },
   }),
   sharp,
@@ -106,14 +109,6 @@ export default buildConfig({
       })
     : undefined,
   plugins: [
-    // Uploads go to S3-compatible storage (Supabase Storage) when configured; otherwise to /media.
-    // Files are still served through Payload at /api/media/file/..., so the bucket can stay private.
-    s3Storage({
-      enabled: Boolean(s3Bucket),
-      collections: { media: true },
-      bucket: s3Bucket,
-      config: s3ClientConfig,
-    }),
     seoPlugin({
       collections: ['solutions', 'capabilities', 'pages', 'news', 'events', 'jobs'],
       uploadsCollection: 'media',
