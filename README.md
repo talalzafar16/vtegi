@@ -187,7 +187,17 @@ location ~ / {
 **Going live:** repeat step 5 for `vtegi.com` (and a `www` record), then clear `NOINDEX` and run
 `docker compose up -d --build app` (static pages read `NOINDEX` at build time).
 
-### 6. Backups
+### 6. Image cleanup (once)
+
+Downloaded product photos and Icecat logos (`media/store/`) are deleted after 30 days, so they are
+fetched fresh on the next view and unused ones don't pile up. Uploads elsewhere in `media/` are
+never touched. Add this line with `crontab -e` (runs nightly at 04:00):
+
+```
+0 4 * * * cd /home/<user>/vtegi && docker compose exec -T app find /app/media/store -type f -mtime +30 -exec rm -f {} +
+```
+
+### 7. Backups
 
 Plesk → **Tools & Settings → Backup Manager → Schedule**: daily, including databases, stored on
 remote storage (not only on the server).
