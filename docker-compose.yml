@@ -26,6 +26,8 @@ services:
     build:
       context: .
       target: deps
+      # Downloads packages through the server's own network (Plesk's firewall doesn't touch it).
+      network: host
     network_mode: host
     env_file: .env
     volumes:
