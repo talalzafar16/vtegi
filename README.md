@@ -89,13 +89,24 @@ Cloudflare Turnstile when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_K
 pnpm seed
 ```
 
-Loads real VTEGI content (site settings, solutions, capabilities, partners with logos).
-Safe to re-run: it only creates what is missing and never overwrites admin edits.
+Loads real VTEGI content (site settings, solutions, capabilities, partners with logos, and store
+brand logos from those partner logos). Safe to re-run: it only creates what is missing and never
+overwrites admin edits.
 
 ## Uploads (images and PDFs)
 
 Uploads are stored in the local `/media` folder (git-ignored; on the VPS `./media`, mounted into the
 app) and served through Payload at `/api/media/file/...`.
+
+## Store product images
+
+Hardware shows the product's **Icecat** photo (up to 5 on the product page), else the brand logo,
+else the category icon; software shows the brand logo or the icon. Brand logos come from
+**Store → Brand Logos** (an upload always wins) or automatically from Icecat for brands it knows.
+Images are downloaded once and saved in `media/store/`, served by `/store/images/...`.
+
+Set `ICECAT_USERNAME` (free Open Icecat account). After upgrading to Full Icecat, add
+`ICECAT_APP_KEY` and restart: all brands get photos, no code change.
 
 ## Deploying on the VPS (Plesk + Docker)
 

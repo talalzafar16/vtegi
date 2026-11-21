@@ -9,6 +9,8 @@ export type ProductSummary = {
   partNumber: string
   name: string
   brand: string
+  /** Ingram only: barcode, used to find product photos. */
+  upc?: string
   /** Ingram only: the distributor's own category, e.g. "Computer Systems". */
   vendorCategory?: string
   vendorSubCategory?: string

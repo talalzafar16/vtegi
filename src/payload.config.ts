@@ -7,6 +7,7 @@ import { buildConfig, type CollectionConfig, type GlobalConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { BrandLogos } from './collections/BrandLogos'
 import { Capabilities } from './collections/Capabilities'
 import { DistributorLists } from './collections/DistributorLists'
 import { Events } from './collections/Events'
@@ -68,6 +69,7 @@ export default buildConfig({
     Jobs,
     Leads,
     StoreCategories,
+    BrandLogos,
     QuoteRequests,
     DistributorLists,
     StoreSyncs,

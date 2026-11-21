@@ -1,11 +1,11 @@
 import Link from 'next/link'
 
 import { ButtonLink } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon'
 import { formatPrice } from '@/lib/format'
 
 import type { StoreProduct } from '../catalog'
-import { productHref } from '../links'
+import { imageHref, productHref } from '../links'
+import { ProductImage } from './product-image'
 import { StockStatus } from './stock-status'
 
 export const cardStyles =
@@ -18,13 +18,13 @@ export function ProductCard({ product }: { product: StoreProduct }) {
     <article
       className={`${cardStyles} relative transition-[border-color,box-shadow] duration-300 hover:border-ink-300 hover:shadow-xl hover:shadow-ink-950/[0.05] on-dark:hover:border-white/20`}
     >
-      <div className="flex items-center justify-between gap-3">
-        <p className="truncate font-mono text-[11px] font-medium tracking-wider text-brand-700 uppercase on-dark:text-brand-400">
-          {product.brand || 'Other'}
-        </p>
-        <Icon name={product.icon} className="size-5 shrink-0 text-ink-300 on-dark:text-ink-600" />
+      <div className="relative -mx-1 -mt-1 mb-4 flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg bg-white on-dark:bg-white/95">
+        <ProductImage src={imageHref(product)} alt={product.name} icon={product.icon} />
       </div>
-      <h3 className="mt-3 line-clamp-3 leading-snug font-semibold" title={product.name}>
+      <p className="truncate font-mono text-[11px] font-medium tracking-wider text-brand-700 uppercase on-dark:text-brand-400">
+        {product.brand || 'Other'}
+      </p>
+      <h3 className="mt-2 line-clamp-3 leading-snug font-semibold" title={product.name}>
         <Link href={href} className="after:absolute after:inset-0 after:rounded-xl">
           {product.name}
         </Link>

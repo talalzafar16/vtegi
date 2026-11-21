@@ -86,6 +86,7 @@ type CatalogItem = {
   ingramPartNumber: string
   vendorPartNumber?: string
   vendorName?: string
+  upcCode?: string
   description?: string
   extraDescription?: string
   category?: string
@@ -108,6 +109,7 @@ function toProduct(item: CatalogItem): ProductSummary | null {
     partNumber: item.vendorPartNumber || item.ingramPartNumber,
     name: (item.extraDescription || item.description || item.ingramPartNumber).trim(),
     brand: (item.vendorName ?? '').trim(),
+    upc: item.upcCode || undefined,
     vendorCategory: item.category,
     vendorSubCategory: item.subCategory,
   }

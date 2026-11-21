@@ -170,6 +170,16 @@ export async function cachedPrices<T>(
   return result
 }
 
+/** A value saved with `remember`, or null. */
+export async function recall<T>(key: string): Promise<T | null> {
+  const [json] = await read([key])
+  return json === null ? null : (JSON.parse(json) as T)
+}
+
+export async function remember(key: string, value: unknown, ttl: number) {
+  await write([[key, value, ttl]])
+}
+
 export async function remove(key: string) {
   memory.delete(key)
   await redis?.del(key).catch(() => undefined)

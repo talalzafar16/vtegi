@@ -76,6 +76,7 @@ export interface Config {
     jobs: Job;
     leads: Lead;
     'store-categories': StoreCategory;
+    'brand-logos': BrandLogo;
     'quote-requests': QuoteRequest;
     'distributor-lists': DistributorList;
     'store-syncs': StoreSync;
@@ -97,6 +98,7 @@ export interface Config {
     jobs: JobsSelect<false> | JobsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
     'store-categories': StoreCategoriesSelect<false> | StoreCategoriesSelect<true>;
+    'brand-logos': BrandLogosSelect<false> | BrandLogosSelect<true>;
     'quote-requests': QuoteRequestsSelect<false> | QuoteRequestsSelect<true>;
     'distributor-lists': DistributorListsSelect<false> | DistributorListsSelect<true>;
     'store-syncs': StoreSyncsSelect<false> | StoreSyncsSelect<true>;
@@ -259,7 +261,6 @@ export interface Media {
    * Describe the image for screen readers and search engines.
    */
   alt: string;
-  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -679,6 +680,19 @@ export interface DistributorList {
   createdAt: string;
 }
 /**
+ * Logos for store products without a photo. Spelling and capitals don't matter: "HP" also covers "HP INC".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brand-logos".
+ */
+export interface BrandLogo {
+  id: number;
+  brand: string;
+  logo: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Quote requests from the online store and the price each customer was sent.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -852,6 +866,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'store-categories';
         value: number | StoreCategory;
+      } | null)
+    | ({
+        relationTo: 'brand-logos';
+        value: number | BrandLogo;
       } | null)
     | ({
         relationTo: 'quote-requests';
@@ -1166,6 +1184,16 @@ export interface StoreCategoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brand-logos_select".
+ */
+export interface BrandLogosSelect<T extends boolean = true> {
+  brand?: T;
+  logo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "quote-requests_select".
  */
 export interface QuoteRequestsSelect<T extends boolean = true> {
@@ -1244,7 +1272,6 @@ export interface StoreSyncsSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
-  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

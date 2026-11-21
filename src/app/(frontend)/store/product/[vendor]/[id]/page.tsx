@@ -10,8 +10,10 @@ import { Section } from '@/components/ui/section'
 import { Heading } from '@/components/ui/typography'
 import { getProduct, productOffers, splitName } from '@/features/store/catalog'
 import { tabLabels } from '@/features/store/components/category-nav'
+import { ProductGallery } from '@/features/store/components/product-gallery'
 import { StockStatus } from '@/features/store/components/stock-status'
-import { categoryHref } from '@/features/store/links'
+import { productPhotos } from '@/features/store/images'
+import { categoryHref, imageHref } from '@/features/store/links'
 import { QuoteForm } from '@/features/store/quote/quote-form'
 import type { VendorId } from '@/features/store/vendors'
 
@@ -75,7 +77,13 @@ export default async function ProductPage({ params }: Props) {
   }
 
   const { product, category } = found
-  const { offers, customFrom, stock } = await productOffers(product)
+  const [{ offers, customFrom, stock }, photos] = await Promise.all([
+    productOffers(product),
+    productPhotos(product).catch(() => []),
+  ])
+  // Without photos, the first image is the brand logo (or the category icon).
+  const images =
+    photos.length > 0 ? photos.map((_, i) => imageHref(product, i)) : [imageHref(product)]
   const { title, highlights } = splitName(product)
   const tab = product.vendor === 'ingram' ? 'hardware' : 'software'
 
@@ -110,18 +118,21 @@ export default async function ProductPage({ params }: Props) {
       </nav>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:grid-rows-[auto_1fr] lg:gap-x-14 lg:gap-y-12">
-        <header className="lg:col-start-1">
-          <p className="flex items-center gap-2 font-mono text-xs font-medium tracking-wider text-brand-700 uppercase on-dark:text-brand-400">
-            <Icon name={category.icon} className="size-4" />
-            {product.brand}
-          </p>
-          <Heading as="h1" size="lg" className="mt-4">
-            {title}
-          </Heading>
-          {product.partNumber && (
-            <p className="mt-4 font-mono text-sm text-ink-500">Part # {product.partNumber}</p>
-          )}
-          {stock && <StockStatus stock={stock} detailed className="mt-3" />}
+        <header className="grid gap-8 sm:grid-cols-[14rem_minmax(0,1fr)] lg:col-start-1">
+          <ProductGallery images={images} alt={title} icon={category.icon} />
+          <div>
+            <p className="flex items-center gap-2 font-mono text-xs font-medium tracking-wider text-brand-700 uppercase on-dark:text-brand-400">
+              <Icon name={category.icon} className="size-4" />
+              {product.brand}
+            </p>
+            <Heading as="h1" size="lg" className="mt-4">
+              {title}
+            </Heading>
+            {product.partNumber && (
+              <p className="mt-4 font-mono text-sm text-ink-500">Part # {product.partNumber}</p>
+            )}
+            {stock && <StockStatus stock={stock} detailed className="mt-3" />}
+          </div>
         </header>
 
         <aside

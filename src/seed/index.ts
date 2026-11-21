@@ -6,6 +6,7 @@ import { getPayload } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { aboutPage } from './data/about-page'
+import { brandLogos } from './data/brand-logos'
 import { capabilities } from './data/capabilities'
 import { homePage } from './data/home-page'
 import { pages } from './data/pages'
@@ -37,7 +38,7 @@ async function upload(folder: string, file: string, alt: string) {
 }
 
 async function exists(
-  collection: 'solutions' | 'capabilities' | 'partners' | 'pages',
+  collection: 'solutions' | 'capabilities' | 'partners' | 'pages' | 'brand-logos',
   field: string,
   value: string,
 ) {
@@ -124,6 +125,21 @@ for (const { logo, ...partner } of partners) {
     data: { ...partner, logo: await upload('partners', logo, `${partner.name} logo`) },
   })
   log(`partner: ${partner.name}`)
+}
+
+// Store brand logos, reusing the partner logos above.
+for (const [brand, partnerName] of brandLogos) {
+  if (await exists('brand-logos', 'brand', brand)) continue
+  const { docs } = await payload.find({
+    collection: 'partners',
+    where: { name: { equals: partnerName } },
+    limit: 1,
+    depth: 0,
+  })
+  const logo = docs[0]?.logo
+  if (typeof logo !== 'number') continue
+  await payload.create({ collection: 'brand-logos', context, data: { brand, logo } })
+  log(`brand logo: ${brand}`)
 }
 
 log('done')
