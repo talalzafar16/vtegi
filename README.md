@@ -97,94 +97,92 @@ Safe to re-run: it only creates what is missing and never overwrites admin edits
 Uploads are stored in the local `/media` folder (git-ignored; on the VPS `./media`, mounted into the
 app) and served through Payload at `/api/media/file/...`.
 
-## Deploying on the VPS (Docker)
+## Deploying on the VPS (Plesk + Docker)
 
-**Caddy** runs on the server itself (HTTPS, the only thing open to the internet) and forwards to
-the app on `localhost:3000`. `docker-compose.yml` runs the **app**, **Postgres** and **Redis**
-(cache), none reachable from outside. Data lives next to the code: database in `./pgdata`,
-uploads in `./media` (both git-ignored). Never delete the project folder or run `git clean -x`
-on the server: that deletes the database and images.
+| Part                                             | Runs in                                                    |
+| ------------------------------------------------ | ---------------------------------------------------------- |
+| Domain, HTTPS certificate, forwarding to the app | **Plesk** (its nginx)                                      |
+| Database                                         | **Plesk's PostgreSQL** (backed up by Plesk Backup Manager) |
+| Website and Redis cache                          | **Docker** (`docker-compose.yml`), on `127.0.0.1` only     |
+
+Uploads are stored in `./media` next to the code (git-ignored). Plesk manages the firewall
+(Tools & Settings → Firewall); `ufw` stays off.
 
 ### 1. Prepare the server (once)
 
 ```bash
-# 2 GB swap as a safety net
-sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
+# 4 GB swap: the build needs more memory than is free next to Plesk
+sudo fallocate -l 4G /swapfile && sudo chmod 600 /swapfile && sudo mkswap /swapfile && sudo swapon /swapfile
 echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-# Firewall: SSH, HTTP and HTTPS only
-sudo ufw allow OpenSSH && sudo ufw allow 80 && sudo ufw allow 443 && sudo ufw enable
 # Docker (log out and back in afterwards)
 curl -fsSL https://get.docker.com | sudo sh
 sudo usermod -aG docker $USER
-# Caddy (runs as a service and starts on boot)
-sudo apt install --yes debian-keyring debian-archive-keyring apt-transport-https curl
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-sudo chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg /etc/apt/sources.list.d/caddy-stable.list
-sudo apt update && sudo apt install caddy
 ```
 
-### 2. Code and settings
+### 2. Database in Plesk (once)
+
+1. **Tools & Settings → Updates → Add/Remove Components**: install **PostgreSQL server**.
+2. **Websites & Domains → (domain) → Databases → Add Database**: type **PostgreSQL**, a database
+   name, a user and a password (letters and digits only).
+
+### 3. Code and settings
 
 ```bash
 git clone <repo-url> vtegi && cd vtegi
-cp .env.example .env && nano .env
+cp .env.example .env && chmod 600 .env && nano .env
 ```
 
-In `.env` on the server:
+In `.env`: `POSTGRES_USER`, `POSTGRES_DB` and `POSTGRES_PASSWORD` from step 2, `PAYLOAD_SECRET`
+(`openssl rand -hex 32`), `NOINDEX=true` while testing, and the SMTP, Turnstile, Ingram and Pax8
+keys. Leave `REDIS_URL` empty (Docker sets it).
 
-- `POSTGRES_USER`, `POSTGRES_DB` (e.g. `vtegi`) and `POSTGRES_PASSWORD` (`openssl rand -hex 24`).
-  They are used once, when the database is first created.
-- `PAYLOAD_SECRET`: a long random value (`openssl rand -hex 32`)
-- `NOINDEX=true` while testing on `new.vtegi.com`
-- SMTP, Turnstile, Ingram and Pax8 keys as in `.env.example`
-
-### 3. First start (empty database)
+### 4. First start (empty database)
 
 Tables and content come first, because the build renders pages from the database.
 
 ```bash
-docker compose up -d postgres
 docker compose run --rm tools pnpm payload migrate   # create the tables
 docker compose run --rm tools pnpm seed              # site content
 docker compose run --rm tools pnpm store:sync        # distributor names (a few minutes)
 docker compose run --rm tools pnpm store:seed        # store categories
 docker compose up -d --build                         # build and start the website
+curl -I http://localhost:3000                        # expect 200
 ```
 
-Then open `/admin`, create the first user (it becomes Admin) and fill in **Store Settings**
-(markup, discounts, quote notifications email, salesperson, first quote number).
+Then open `/admin`, create the first user (it becomes Admin) and fill in **Store Settings**.
 
-### 4. HTTPS with Caddy
+### 5. Domain and HTTPS in Plesk
 
-Point `new.vtegi.com` (DNS A record) to the server's IP, put this in `/etc/caddy/Caddyfile` and run
-`sudo systemctl reload caddy`. Caddy gets the certificate by itself.
+1. Point the domain (DNS A record) to the server's IP.
+2. **Websites & Domains → Add Domain → Blank website**.
+3. Domain → **SSL/TLS Certificates** → Let's Encrypt (domain name only), then turn on the
+   redirect from http to https.
+4. Domain → **Hosting & DNS → Apache & nginx**: untick **Proxy mode** and **Serve static files
+   directly by nginx**, and paste into **Additional nginx directives**:
 
-```
-new.vtegi.com {
-	encode zstd gzip
-	reverse_proxy 127.0.0.1:3000
+```nginx
+location ~ / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
 }
 ```
 
-**Going live:** point `vtegi.com` and `www` to the server, replace the Caddyfile with the block
-below and reload Caddy, clear `NOINDEX`, then `docker compose up -d --build app` (static pages read
-`NOINDEX` at build time).
+**Going live:** repeat step 5 for `vtegi.com` (and a `www` record), then clear `NOINDEX` and run
+`docker compose up -d --build app` (static pages read `NOINDEX` at build time).
 
-```
-www.vtegi.com {
-	redir https://vtegi.com{uri} permanent
-}
+### 6. Backups
 
-vtegi.com {
-	encode zstd gzip
-	reverse_proxy 127.0.0.1:3000
-}
-```
+Plesk → **Tools & Settings → Backup Manager → Schedule**: daily, including databases, stored on
+remote storage (not only on the server).
 
 **Updates:** `git pull && docker compose up -d --build app` (new migrations run during the build).
-**Logs:** `docker compose logs -f app` and `journalctl -u caddy -f`.
-**Database access:** `ssh -L 5432:127.0.0.1:5432 <user>@<server-ip>`, then connect a database client to `localhost:5432`.
+**Logs:** `docker compose logs -f app`.
 
 ## Database changes
 

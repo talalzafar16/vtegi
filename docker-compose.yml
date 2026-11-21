@@ -1,25 +1,24 @@
+# Server: the app uses Plesk's PostgreSQL and Redis on localhost, and Plesk's nginx forwards
+# the domain to 127.0.0.1:3000. The "postgres" service is only for local development.
+
 services:
   app:
     build:
       context: .
-      # The build renders static pages from the database, reached on the server's localhost.
+      # The build renders static pages from the database on the server's localhost.
       network: host
       secrets:
         - env
+    # Shares the server's network: reaches PostgreSQL and Redis on localhost and listens on
+    # 127.0.0.1:3000 only (see the Dockerfile), never the internet.
+    network_mode: host
     env_file: .env
-    # Inside Docker the services are reached by name (outside, .env's localhost is used).
     environment:
-      POSTGRES_HOST: postgres
-      REDIS_URL: redis://redis:6379
-    ports:
-      - 127.0.0.1:3000:3000
+      REDIS_URL: redis://localhost:6379
     volumes:
       - ./media:/app/media
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
+      - redis
     restart: unless-stopped
 
   # One-off commands (migrations, seeders): docker compose run --rm tools pnpm seed
@@ -27,40 +26,32 @@ services:
     build:
       context: .
       target: deps
+    network_mode: host
     env_file: .env
-    environment:
-      POSTGRES_HOST: postgres
     volumes:
       - ./media:/app/media
-    depends_on:
-      postgres:
-        condition: service_healthy
     profiles: [tools]
 
+  redis:
+    image: redis:7-alpine
+    # Cache only: capped, oldest entries dropped when full, nothing saved to disk.
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru --save "" --appendonly no
+    ports:
+      - 127.0.0.1:6379:6379
+    restart: unless-stopped
+
+  # Local development only (docker compose up -d postgres). Never started on the server.
   postgres:
     image: postgres:17-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
       POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-    # Database files in ./pgdata next to the code (git-ignored).
     volumes:
       - ./pgdata:/var/lib/postgresql/data
-    # Localhost only (for pnpm dev, the build and SSH tunnels), never the internet.
     ports:
       - 127.0.0.1:5432:5432
-    healthcheck:
-      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-
-  redis:
-    image: redis:7-alpine
-    # Cache only: capped, oldest entries dropped when full, nothing saved to disk.
-    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru --save "" --appendonly no
-    restart: unless-stopped
+    profiles: [local]
 
 secrets:
   env:

@@ -11,4 +11,5 @@ ENV NODE_ENV=production
 # then the build renders static pages from the database.
 FROM deps
 RUN --mount=type=secret,id=env,target=/app/.env pnpm payload migrate && pnpm build
-CMD ["pnpm", "start"]
+# Localhost only: the container shares the server's network, and Plesk's nginx forwards to it.
+CMD ["node_modules/.bin/next", "start", "-H", "127.0.0.1"]
