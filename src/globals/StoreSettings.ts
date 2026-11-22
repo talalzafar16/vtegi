@@ -24,6 +24,17 @@ export const StoreSettings: GlobalConfig = {
       },
     },
     {
+      name: 'showDiscounts',
+      label: 'Show volume discounts on product pages',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        condition: (data) => Boolean(data?.showPrices),
+        description:
+          'When off, product pages show one price instead of the discount table. Quotes still apply the discounts.',
+      },
+    },
+    {
       name: 'markupPercent',
       label: 'Markup (%)',
       type: 'number',

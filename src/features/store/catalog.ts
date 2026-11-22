@@ -357,8 +357,12 @@ export async function productOffers(product: ProductSummary) {
   const settings = await getStoreSettings()
   const rules = settings.showPrices ? settings.rules : null
   const customFrom = settings.rules?.customPricingFrom ?? null
-  const levelsFor = (costAt: (quantity: number) => number | null) =>
-    rules ? priceLevels(costAt, rules) : []
+  const levelsFor = (costAt: (quantity: number) => number | null) => {
+    const levels = rules ? priceLevels(costAt, rules) : []
+    // Discounts hidden: a single row with the one-unit price, up to custom pricing.
+    if (settings.showDiscounts || !levels[0]) return levels
+    return [{ ...levels[0], to: customFrom ? customFrom - 1 : null }]
+  }
 
   if (product.vendor === 'ingram') {
     let found: PriceAndStock | undefined

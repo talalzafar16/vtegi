@@ -31,6 +31,7 @@ export const getStoreSettings = cache(async () => {
   return {
     rules,
     showPrices: Boolean(store.showPrices) && rules !== null,
+    showDiscounts: store.showDiscounts !== false,
     notificationEmail: store.notificationEmail || site.leadEmail || site.email,
     salesperson: store.salesperson || null,
     hiddenBrands,

@@ -1547,6 +1547,10 @@ export interface StoreSetting {
    */
   showPrices?: boolean | null;
   /**
+   * When off, product pages show one price instead of the discount table. Quotes still apply the discounts.
+   */
+  showDiscounts?: boolean | null;
+  /**
    * Added to the distributor cost of every product. Example: 20 means cost + 20%. Prices stay hidden until this is set.
    */
   markupPercent: number;
@@ -1753,6 +1757,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
  */
 export interface StoreSettingsSelect<T extends boolean = true> {
   showPrices?: T;
+  showDiscounts?: T;
   markupPercent?: T;
   quantityDiscounts?:
     | T
