@@ -35,7 +35,7 @@ export const requestSchema = z
       .string()
       .trim()
       .min(10, 'Please add a few more details (at least 10 characters).')
-      .max(2000, 'Please keep it under 2,000 characters.'),
+      .max(4000, 'Please keep it under 4,000 characters.'),
     /** Honeypot: hidden from people, bots tend to fill it in. */
     website: z.string().max(200),
   })

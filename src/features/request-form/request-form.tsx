@@ -28,7 +28,7 @@ import { emptyRequest, requestSchema, type RequestInput } from './schema'
 type SolutionOption = { slug: string; title: string }
 
 const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
-const MESSAGE_MAX = 2000
+const MESSAGE_MAX = 4000
 
 export type RequestFormProps = {
   solutions: SolutionOption[]

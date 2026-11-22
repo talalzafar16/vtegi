@@ -1,8 +1,10 @@
+import { ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 
+import { ButtonLink } from '@/components/ui/button'
 import { PageHero } from '@/components/ui/page-hero'
 import { Section } from '@/components/ui/section'
 import { filtersOf, listCategory, resolveFilter, tabsOf, type Tab } from '@/features/store/catalog'
@@ -49,7 +51,16 @@ export default async function StoreCategoryPage({ params, searchParams }: Props)
         }
         title={category.title}
         intro={category.description}
-      />
+      >
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+          <ButtonLink href="/request?inquiry=custom-build" size="lg">
+            Build a custom system <ArrowRight aria-hidden className="size-4" />
+          </ButtonLink>
+          <p className="max-w-xs text-sm text-ink-300">
+            Can’t find the exact setup you need? We’ll build it to your specs.
+          </p>
+        </div>
+      </PageHero>
 
       <Section id="products" className="scroll-mt-16 py-16 md:py-20">
         {tab ? (
