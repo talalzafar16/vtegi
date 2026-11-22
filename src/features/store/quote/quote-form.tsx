@@ -27,6 +27,8 @@ type QuoteFormProps = {
   offers: Offer[]
   /** From this quantity VTEGI prices the order itself. */
   customFrom: number | null
+  /** Off: only the one-unit price is shown, without quantity rows. */
+  showDiscounts: boolean
 }
 
 function priceUnit(offer: Offer) {
@@ -39,7 +41,13 @@ function priceUnit(offer: Offer) {
 const range = (from: number, to: number | null) =>
   to === null ? `${from}+` : from === to ? String(from) : `${from}–${to}`
 
-export function QuoteForm({ vendor, productId, offers, customFrom }: QuoteFormProps) {
+export function QuoteForm({
+  vendor,
+  productId,
+  offers,
+  customFrom,
+  showDiscounts,
+}: QuoteFormProps) {
   const [offerKey, setOfferKey] = useState(offers[0]?.key ?? 'unit')
   const offer = offers.find((o) => o.key === offerKey)
 
@@ -161,7 +169,7 @@ export function QuoteForm({ vendor, productId, offers, customFrom }: QuoteFormPr
       )}
 
       {offer && offer.levels.length > 0 ? (
-        <PriceTable offer={offer} customFrom={customFrom} />
+        <PriceTable offer={offer} customFrom={showDiscounts ? customFrom : null} />
       ) : (
         <p className="rounded-md bg-ink-50 px-4 py-3 text-sm text-ink-700 on-dark:bg-white/5 on-dark:text-ink-300">
           Price on request: send the form and we’ll email you a quote.
@@ -293,6 +301,17 @@ export function QuoteForm({ vendor, productId, offers, customFrom }: QuoteFormPr
 }
 
 function PriceTable({ offer, customFrom }: { offer: Offer; customFrom: number | null }) {
+  const [first] = offer.levels
+  if (offer.levels.length === 1 && !customFrom) {
+    return (
+      <p className="flex items-baseline justify-between border-y border-ink-100 py-2 text-sm on-dark:border-white/10">
+        <span className="font-medium text-ink-800 on-dark:text-ink-200">
+          Price {priceUnit(offer)}
+        </span>
+        <span className="font-semibold tabular-nums">{formatPrice(first.unitPrice)}</span>
+      </p>
+    )
+  }
   return (
     <table className="w-full text-sm">
       <caption className="mb-2 text-left text-sm font-medium text-ink-800 on-dark:text-ink-200">

@@ -77,7 +77,7 @@ export default async function ProductPage({ params }: Props) {
   }
 
   const { product, category } = found
-  const [{ offers, customFrom, stock }, photos] = await Promise.all([
+  const [{ offers, customFrom, showDiscounts, stock }, photos] = await Promise.all([
     productOffers(product),
     productPhotos(product).catch(() => []),
   ])
@@ -147,13 +147,16 @@ export default async function ProductPage({ params }: Props) {
             <p className="mt-1 mb-6 text-sm text-ink-600 on-dark:text-ink-400">
               {stock?.status === 'out-of-stock'
                 ? "This product is out of stock right now. Send your request and we'll contact you when it's available."
-                : 'Prices include volume discounts and can change; your quote uses the latest price.'}
+                : showDiscounts
+                  ? 'Prices include volume discounts and can change; your quote uses the latest price.'
+                  : 'Prices can change; your quote uses the latest price.'}
             </p>
             <QuoteForm
               vendor={product.vendor}
               productId={product.id}
               offers={offers}
               customFrom={customFrom}
+              showDiscounts={showDiscounts}
             />
           </div>
         </aside>

@@ -359,10 +359,11 @@ export async function productOffers(product: ProductSummary) {
   const customFrom = settings.rules?.customPricingFrom ?? null
   const levelsFor = (costAt: (quantity: number) => number | null) => {
     const levels = rules ? priceLevels(costAt, rules) : []
-    // Discounts hidden: a single row with the one-unit price, up to custom pricing.
+    // Discounts hidden: only the one-unit price.
     if (settings.showDiscounts || !levels[0]) return levels
-    return [{ ...levels[0], to: customFrom ? customFrom - 1 : null }]
+    return [{ ...levels[0], to: null }]
   }
+  const showDiscounts = settings.showDiscounts
 
   if (product.vendor === 'ingram') {
     let found: PriceAndStock | undefined
@@ -380,7 +381,7 @@ export async function productOffers(product: ProductSummary) {
       unit: 'unit',
       levels: levelsFor(() => found?.cost ?? null),
     }
-    return { offers: [offer], customFrom, stock: found?.stock ?? null }
+    return { offers: [offer], customFrom, showDiscounts, stock: found?.stock ?? null }
   }
 
   let options: PriceOption[] = []
@@ -398,7 +399,7 @@ export async function productOffers(product: ProductSummary) {
     unit: option.unit,
     levels: levelsFor((quantity) => tierCost(option, quantity)),
   }))
-  return { offers, customFrom, stock: null }
+  return { offers, customFrom, showDiscounts, stock: null }
 }
 
 export type QuotePricing = {
