@@ -58,18 +58,18 @@ The component styleguide is at http://localhost:3000/styleguide (development onl
 
 ## Pages
 
-| Route                                                               | Content source                                          |
-| ------------------------------------------------------------------- | ------------------------------------------------------- |
-| `/`                                                                 | Home Page global + Solutions, Capabilities, Partners    |
-| `/solutions`, `/solutions/[slug]`                                   | Solutions collection                                    |
-| `/capabilities`, `/capabilities/[slug]`                             | Capabilities collection                                 |
-| `/company/about`                                                    | About Page global                                       |
-| `/company/careers`, `/company/news`, `/company/events` (+ `[slug]`) | Jobs, News, Events (published only)                     |
-| `/partners`                                                         | Partners collection                                     |
-| `/contracting`, `/contact`                                          | Site Settings                                           |
-| `/request`                                                          | Request form (`?solution=` / `?inquiry=` pre-select)    |
-| `/store`                                                            | Static "coming soon" page (e-commerce is a later phase) |
-| `/[slug]`                                                           | Pages collection (e.g. `/privacy`, `/accessibility`)    |
+| Route                                                               | Content source                                       |
+| ------------------------------------------------------------------- | ---------------------------------------------------- |
+| `/`                                                                 | Home Page global + Solutions, Capabilities, Partners |
+| `/solutions`, `/solutions/[slug]`                                   | Solutions collection                                 |
+| `/capabilities`, `/capabilities/[slug]`                             | Capabilities collection                              |
+| `/company/about`                                                    | About Page global                                    |
+| `/company/careers`, `/company/news`, `/company/events` (+ `[slug]`) | Jobs, News, Events (published only)                  |
+| `/partners`                                                         | Partners collection                                  |
+| `/contracting`, `/contact`                                          | Site Settings                                        |
+| `/request`                                                          | Request form (`?solution=` / `?inquiry=` pre-select) |
+| `/store`, `/store/[category]`, `/store/product/...`                 | Store Categories + live Ingram Micro / Pax8 products |
+| `/[slug]`                                                           | Pages collection (e.g. `/privacy`, `/accessibility`) |
 
 Website queries run with `overrideAccess: false`, so drafts and admin-only data never reach the public site.
 
@@ -136,6 +136,8 @@ sudo usermod -aG docker $USER
 2. **Websites & Domains → (domain) → Databases → Add Database**: type **PostgreSQL**, a database
    name, a user and a password (letters and digits only).
 
+The database belongs to that domain in Plesk: **deleting the domain deletes the database.**
+
 ### 3. Code and settings
 
 ```bash
@@ -166,9 +168,11 @@ Then open `/admin`, create the first user (it becomes Admin) and fill in **Store
 
 1. Point the domain (DNS A record) to the server's IP.
 2. **Websites & Domains → Add Domain → Blank website**.
-3. Domain → **SSL/TLS Certificates** → Let's Encrypt (domain name only), then turn on the
+3. Domain → **SSL/TLS Certificates** → Let's Encrypt (domain name and "www"), then turn on the
    redirect from http to https.
-4. Domain → **Hosting & DNS → Apache & nginx**: untick **Proxy mode** and **Serve static files
+4. Domain → **Hosting Settings → Preferred domain**: the name without www (www then forwards to it).
+5. Domain → **Mail → Mail Settings**: **Not configured** (email stays with Microsoft 365).
+6. Domain → **Hosting & DNS → Apache & nginx**: untick **Proxy mode** and **Serve static files
    directly by nginx**, and paste into **Additional nginx directives**:
 
 ```nginx
@@ -184,8 +188,8 @@ location ~ / {
 }
 ```
 
-**Going live:** repeat step 5 for `vtegi.com` (and a `www` record), then clear `NOINDEX` and run
-`docker compose up -d --build app` (static pages read `NOINDEX` at build time).
+**Changing domain:** repeat step 5 for the new domain. Clear `NOINDEX` when the site should appear
+in search engines, then rebuild without cache (see Updates).
 
 ### 6. Image cleanup (once)
 
@@ -202,8 +206,18 @@ never touched. Add this line with `crontab -e` (runs nightly at 04:00):
 Plesk → **Tools & Settings → Backup Manager → Schedule**: daily, including databases, stored on
 remote storage (not only on the server).
 
-**Updates:** `git pull && docker compose up -d --build app` (new migrations run during the build).
-**Logs:** `docker compose logs -f app`.
+### Updates
+
+```bash
+git pull && docker compose up -d --build app                      # new code; new migrations run during the build
+docker compose run --rm --build tools pnpm seed                   # scripts after a pull: --build updates the tools image
+docker compose build --no-cache app && docker compose up -d app   # after changing only .env
+docker compose logs -f app                                        # logs
+```
+
+`.env` reaches the build as a secret, and Docker doesn't notice when it changes: a normal rebuild
+reuses the previous build. Values used at build time (`NEXT_PUBLIC_*`, `NOINDEX`) need
+`--no-cache`; other values only need `docker compose up -d --force-recreate app`.
 
 ## Database changes
 
